@@ -1,0 +1,443 @@
+/* ==========================================
+   GOOGLE FONT
+========================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
+/* ==========================================
+   EXPLORE PAGE SHELL
+========================================== */
+
+.explore-page {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  font-family: "Inter", sans-serif;
+  transition: 0.4s ease;
+  isolation: isolate;
+  padding-top: 84px;
+}
+
+.explore-page.dark {
+  background: #000;
+  color: #fff;
+}
+
+.explore-page.light {
+  background: #fafafa;
+  color: #111;
+}
+
+.explore-page .bg-glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(150px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.explore-page .glow-1 {
+  width: 500px;
+  height: 500px;
+  background: rgba(255, 255, 255, 0.06);
+  top: -150px;
+  left: -150px;
+}
+
+.explore-page .glow-2 {
+  width: 420px;
+  height: 420px;
+  background: rgba(255, 255, 255, 0.05);
+  right: -100px;
+  top: 300px;
+}
+
+.explore-page .glow-3 {
+  width: 600px;
+  height: 600px;
+  background: rgba(255, 255, 255, 0.04);
+  bottom: -250px;
+  left: 35%;
+}
+
+/* ==========================================
+   TOP NAV (shared pattern with Home)
+========================================== */
+
+.explore-page .topnav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  z-index: 50;
+
+  display: flex;
+  align-items: center;
+  gap: 32px;
+
+  padding: 0 40px;
+
+  background: rgba(10, 10, 10, 0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.explore-page.light .topnav {
+  background: rgba(255, 255, 255, 0.75);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.explore-page .topnav-logo {
+  font-weight: 900 !important;
+  letter-spacing: -1px !important;
+  cursor: pointer;
+  background: linear-gradient(90deg, #fff, #bdbdbd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  white-space: nowrap;
+}
+
+.explore-page.light .topnav-logo {
+  background: linear-gradient(90deg, #111, #555);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.explore-page .topnav-search {
+  flex: 1;
+  max-width: 420px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 16px;
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.explore-page .topnav-search input {
+  color: inherit;
+  font-size: 14px;
+}
+
+.explore-page .topnav-search-icon {
+  color: #aaa;
+}
+
+.explore-page.light .topnav-search {
+  background: #fff;
+  border: 1px solid #ddd;
+  color: #111;
+}
+
+.explore-page .topnav-icons {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.explore-page .topnav-icons .MuiIconButton-root {
+  color: #eaeaea;
+}
+
+.explore-page.light .topnav-icons .MuiIconButton-root {
+  color: #333;
+}
+
+.explore-page .nav-icon-active {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.explore-page.light .nav-icon-active {
+  color: #111 !important;
+  background: rgba(0, 0, 0, 0.06) !important;
+}
+
+.explore-page .topnav-avatar {
+  width: 34px !important;
+  height: 34px !important;
+  margin-left: 8px;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+/* ==========================================
+   LAYOUT
+========================================== */
+
+.explore-layout {
+  position: relative;
+  z-index: 10;
+
+  width: min(1200px, 94%);
+  margin: 0 auto;
+  padding-bottom: 80px;
+}
+
+.explore-header {
+  padding: 30px 4px 6px;
+}
+
+.explore-title {
+  font-size: 34px !important;
+  font-weight: 800 !important;
+  letter-spacing: -1px;
+}
+
+.explore-subtitle {
+  color: #999;
+  margin-top: 4px !important;
+  font-size: 15px !important;
+}
+
+/* ==========================================
+   TABS
+========================================== */
+
+.explore-tabs {
+  display: flex;
+  gap: 10px;
+  margin: 22px 0 6px;
+  padding: 0 4px;
+}
+
+.explore-tab {
+  font-weight: 600 !important;
+  color: #ddd !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 999px !important;
+  padding: 4px 4px !important;
+}
+
+.explore-page.light .explore-tab {
+  color: #333 !important;
+  background: rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.explore-tab-active {
+  background: linear-gradient(135deg, #fff, #d9d9d9) !important;
+  color: #000 !important;
+  border: 1px solid transparent !important;
+}
+
+/* ==========================================
+   TAG RAIL
+========================================== */
+
+.tag-rail {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 10px 4px 26px;
+}
+
+.tag-rail::-webkit-scrollbar {
+  height: 0;
+}
+
+.tag-chip {
+  flex-shrink: 0;
+  font-size: 12.5px !important;
+  color: #bbb !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.explore-page.light .tag-chip {
+  color: #555 !important;
+  background: rgba(0, 0, 0, 0.03) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ==========================================
+   MASONRY TILE GRID
+========================================== */
+
+.tile-grid {
+  columns: 4 220px;
+  column-gap: 14px;
+}
+
+.tile {
+  position: relative;
+  break-inside: avoid;
+  margin-bottom: 14px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #111;
+  cursor: pointer;
+}
+
+.tile img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  transition: 0.4s ease;
+}
+
+.tile-square img {
+  aspect-ratio: 1 / 1;
+}
+
+.tile-tall img {
+  aspect-ratio: 4 / 5.4;
+}
+
+.tile:hover img {
+  transform: scale(1.06);
+  filter: brightness(0.65);
+}
+
+.tile-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+
+  opacity: 0;
+  transition: 0.3s ease;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.tile:hover .tile-overlay {
+  opacity: 1;
+}
+
+.tile-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.tile-type-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+}
+
+/* ==========================================
+   PEOPLE GRID (People tab)
+========================================== */
+
+.people-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 18px;
+}
+
+.people-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 28px 16px;
+  border-radius: 24px;
+  background: rgba(18, 18, 18, 0.55);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.explore-page.light .people-card {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.people-avatar {
+  width: 68px !important;
+  height: 68px !important;
+  margin-bottom: 6px;
+}
+
+.people-username {
+  font-weight: 700 !important;
+  font-size: 14.5px !important;
+}
+
+.people-followers {
+  font-size: 12.5px !important;
+  color: #999;
+  margin-bottom: 10px !important;
+}
+
+.people-follow-btn {
+  font-weight: 700 !important;
+  background: linear-gradient(135deg, #fff, #d9d9d9) !important;
+  color: #000 !important;
+  border-radius: 999px !important;
+  width: 100%;
+}
+
+/* ==========================================
+   FOOTER
+========================================== */
+
+.explore-end {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #888;
+  padding: 40px 0 10px;
+  font-size: 14px;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 900px) {
+  .tile-grid {
+    columns: 3 160px;
+  }
+}
+
+@media (max-width: 560px) {
+  .explore-page .topnav {
+    padding: 0 16px;
+    gap: 16px;
+  }
+
+  .explore-page .topnav-search {
+    display: none;
+  }
+
+  .explore-layout {
+    width: 100%;
+    padding: 0 10px 60px;
+  }
+
+  .tile-grid {
+    columns: 2 140px;
+    column-gap: 10px;
+  }
+
+  .explore-title {
+    font-size: 26px !important;
+  }
+}

@@ -1,0 +1,114 @@
+.explore-card {
+  position: relative;
+  padding: 28px 20px;
+  text-align: left;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  overflow: hidden;
+  transition:
+    transform 0.35s ease,
+    border-color 0.35s ease,
+    background 0.35s ease;
+}
+
+.explore-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at top left,
+    rgba(255, 255, 255, 0.07),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.explore-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.explore-card:hover::before {
+  opacity: 1;
+}
+
+.explore-node-wrap {
+  position: relative;
+  width: 66px;
+  height: 66px;
+  margin-bottom: 25px;
+}
+
+.explore-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.35);
+  animation: spinRing 10s linear infinite;
+}
+
+.explore-ring::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.8);
+}
+
+.explore-node {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #ffffff;
+  font-size: 1.3rem;
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+  transition: box-shadow 0.35s ease;
+}
+
+.explore-card:hover .explore-node {
+  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.3);
+}
+
+.explore-card:hover .explore-ring {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.explore-card h3 {
+  margin-bottom: 12px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-family: "Inter", sans-serif;
+}
+
+.explore-card p {
+  color: #8d8d8d;
+  font-size: 0.98rem;
+  line-height: 1.75;
+  font-family: "Inter", sans-serif;
+}
+
+@keyframes spinRing {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

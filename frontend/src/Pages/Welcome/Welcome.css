@@ -1,0 +1,1221 @@
+/* Main Container */
+.welcome {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  background: #060606; /* <-- add this */
+  color: #eef0ff;
+}
+
+.background-animation {
+  position: absolute;
+  inset: -150px;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Dimmer variant for non-hero sections */
+.background-animation--subtle {
+  opacity: 10;
+}
+
+/* Keep content above background */
+.welcome-content,
+.logo {
+  position: relative;
+  z-index: 10;
+}
+
+/* Orbit Rings — completely static, just the visual circle */
+.orbit {
+  position: absolute;
+  border: 1px solid rgba(129, 140, 248, 0.18);
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  margin: 0;
+  transform: translate(-50%, -50%);
+}
+
+.orbit-1 {
+  width: 420px;
+  height: 420px;
+}
+
+.orbit-2 {
+  width: 650px;
+  height: 650px;
+  border-color: rgba(129, 140, 248, 0.13);
+}
+
+.orbit-3 {
+  width: 900px;
+  height: 900px;
+  border-color: rgba(129, 140, 248, 0.08);
+}
+
+/* Dots — travel a true circular path along the ring; ring itself never moves */
+.dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  background: #818cf8;
+  box-shadow: 0 0 14px 3px rgba(129, 140, 248, 0.8);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.dot-1 {
+  offset-path: circle(210px at 50% 50%);
+  animation:
+    orbitMove 12s linear infinite,
+    dotPulse 3s ease-in-out infinite;
+}
+
+.dot-2 {
+  offset-path: circle(325px at 50% 50%);
+  background: #c084fc;
+  box-shadow: 0 0 14px 3px rgba(192, 132, 252, 0.8);
+  animation:
+    orbitMoveReverse 20s linear infinite,
+    dotPulse 3s ease-in-out infinite 0.5s;
+}
+
+.dot-3 {
+  offset-path: circle(450px at 50% 50%);
+  animation:
+    orbitMove 32s linear infinite,
+    dotPulse 3s ease-in-out infinite 1s;
+}
+
+.dot-4 {
+  offset-path: circle(450px at 50% 50%);
+  offset-distance: 50%;
+  background: #c084fc;
+  box-shadow: 0 0 14px 3px rgba(192, 132, 252, 0.8);
+  animation:
+    orbitMoveReverse 32s linear infinite,
+    dotPulse 3s ease-in-out infinite 1.8s;
+}
+
+@keyframes orbitMove {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}
+
+@keyframes orbitMoveReverse {
+  from {
+    offset-distance: 100%;
+  }
+  to {
+    offset-distance: 0%;
+  }
+}
+
+@keyframes dotPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.6);
+  }
+}
+
+/* Soft Glow */
+.welcome::after {
+  content: "";
+  position: absolute;
+  width: 700px;
+  height: 700px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgba(99, 102, 241, 0.16),
+    transparent 70%
+  );
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+/* Logo */
+.logo-img {
+  width: 110px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 0 16px rgba(129, 140, 248, 0.35));
+  animation: floating 5s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0% {
+    transform: translateY(0px);
+  }
+  25% {
+    transform: translateY(-8px);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+  75% {
+    transform: translateY(-8px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* Content Wrapper */
+.welcome-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  max-width: 900px;
+}
+
+/* Tagline Pill */
+.welcome-tagline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  background: #150f2b !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid rgba(129, 140, 248, 0.25);
+  border-radius: 0px;
+  color: #c7c9f5;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: ui-monospace, monospace;
+}
+
+/* Main Title */
+.welcome-title {
+  margin: 0;
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -3px;
+  max-width: 900px;
+  font-family: serif;
+  color: #f4f4ff;
+}
+
+/* Description */
+.welcome-description {
+  margin: 0;
+  max-width: 700px;
+  font-size: 16px;
+  line-height: 25px;
+  color: #a9a8c9;
+  font-family: "Inter", sans-serif;
+  text-align: center;
+}
+
+.welcome-buttons {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 35px;
+  flex-wrap: wrap;
+}
+
+/* Common Button Style */
+.welcome-buttons .MuiButton-root {
+  padding: 14px 30px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: none;
+  transition: all 0.35s ease;
+  min-width: 190px;
+}
+
+/* Primary Button */
+.join-btn {
+  background: linear-gradient(135deg, #6366f1, #a855f7) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.35);
+}
+
+.join-btn:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(135deg, #7477f5, #b968fb) !important;
+  box-shadow: 0 15px 40px rgba(99, 102, 241, 0.5);
+}
+
+/* Secondary Button */
+.explore-btn {
+  background: transparent !important;
+  color: #e0e1ff !important;
+  border: 1px solid rgba(129, 140, 248, 0.3) !important;
+  backdrop-filter: blur(10px);
+}
+
+.explore-btn:hover {
+  background: rgba(99, 102, 241, 0.12) !important;
+  border-color: rgba(129, 140, 248, 0.5) !important;
+  transform: translateY(-3px);
+}
+
+/* Click Animation */
+.join-btn:active,
+.explore-btn:active {
+  transform: scale(0.96);
+}
+
+/* ===========================================
+   HOW DEVORBIT WORKS
+=========================================== */
+.how-it-works {
+  position: relative;
+  overflow: hidden;
+  background: #070512;
+  color: #eef0ff;
+  padding: 140px 8%;
+}
+
+.how-it-works::before {
+  content: "";
+  position: absolute;
+  inset: -200px;
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(99, 102, 241, 0.14),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 20% 80%,
+      rgba(168, 85, 247, 0.09),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(99, 102, 241, 0.08),
+      transparent 45%
+    );
+  filter: blur(90px);
+  pointer-events: none;
+  z-index: 0;
+  animation: glowDrift 20s ease-in-out infinite alternate;
+}
+
+@keyframes glowDrift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(20px, -15px) scale(1.05);
+  }
+  100% {
+    transform: translate(-15px, 15px) scale(1);
+  }
+}
+
+.section-header,
+.timeline {
+  position: relative;
+  z-index: 10;
+}
+
+.section-header {
+  text-align: center;
+  max-width: 750px;
+  margin: 0 auto 100px;
+}
+
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  border: 1px solid rgba(129, 140, 248, 0.2);
+  /* border-radius: 999px; */
+  background: rgba(99, 102, 241, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #c7c9f5;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-family: ui-monospace, monospace;
+  font-weight: 500;
+}
+
+.section-header h2 {
+  margin-top: 24px;
+  margin-bottom: 18px;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -2px;
+  font-family: serif;
+  background: linear-gradient(180deg, #c7c9ff 0%, #7c7fe0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: #ffffff;
+}
+
+.section-header p {
+  color: #9c9ac2;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  font-family: "Inter", sans-serif;
+}
+
+/* ===========================================
+   TIMELINE — orbital connector + orbit-ring nodes
+=========================================== */
+
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  max-width: 1400px;
+  margin: auto;
+}
+
+/* Dashed orbital path instead of a plain line */
+.timeline-line {
+  position: absolute;
+  top: 33px;
+  left: calc(12.5% - 20px);
+  right: calc(12.5% - 20px);
+  height: 0;
+  border-top: 1px dashed rgba(129, 140, 248, 0.3);
+  z-index: -1;
+}
+
+.timeline-step {
+  position: relative;
+  padding: 28px 20px;
+  text-align: left;
+  border-radius: 20px;
+  background: rgba(99, 102, 241, 0.04);
+  border: 1px solid rgba(129, 140, 248, 0.1);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition:
+    transform 0.35s ease,
+    border-color 0.35s ease,
+    background 0.35s ease;
+  overflow: hidden;
+}
+
+.timeline-step::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at top left,
+    rgba(99, 102, 241, 0.12),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.timeline-step:hover {
+  transform: translateY(-6px);
+  border-color: rgba(129, 140, 248, 0.3);
+  background: rgba(99, 102, 241, 0.07);
+}
+
+.timeline-step:hover::before {
+  opacity: 1;
+}
+
+/* Node wrapper — holds the spinning orbit ring + the solid number circle */
+.timeline-node-wrap {
+  position: relative;
+  width: 66px;
+  height: 66px;
+  margin-bottom: 25px;
+}
+
+/* Spinning dashed ring, like a tiny orbit around each step number */
+.timeline-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed rgba(129, 140, 248, 0.45);
+  animation: spinRing 10s linear infinite;
+}
+
+.timeline-step:nth-child(3) .timeline-ring {
+  animation-direction: reverse;
+  animation-duration: 14s;
+}
+
+.timeline-step:nth-child(4) .timeline-ring {
+  animation-duration: 8s;
+}
+
+.timeline-step:nth-child(5) .timeline-ring {
+  animation-direction: reverse;
+  animation-duration: 12s;
+}
+
+@keyframes spinRing {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* A tiny satellite dot riding the ring's edge */
+.timeline-ring::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: #a855f7;
+  box-shadow: 0 0 8px 2px rgba(168, 85, 247, 0.9);
+}
+
+.timeline-node {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 54px;
+  height: 54px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+  transition: box-shadow 0.35s ease;
+}
+
+.timeline-step:hover .timeline-node {
+  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
+}
+
+.timeline-step:hover .timeline-ring {
+  border-color: rgba(129, 140, 248, 0.75);
+}
+
+.timeline-step h3 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+  font-weight: 600;
+  font-family: "Inter", sans-serif;
+  color: #eef0ff;
+}
+
+.timeline-step p {
+  color: #9c9ac2;
+  line-height: 1.75;
+  font-size: 0.98rem;
+  font-family: "Inter", sans-serif;
+}
+
+/* ===========================================
+   EXPLORE
+=========================================== */
+.explore {
+  position: relative;
+  overflow: hidden;
+  background: #070512;
+  color: #eef0ff;
+  padding: 140px 8%;
+}
+
+.explore::before {
+  content: "";
+  position: absolute;
+  inset: -200px;
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(99, 102, 241, 0.14),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 20% 80%,
+      rgba(168, 85, 247, 0.09),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(99, 102, 241, 0.08),
+      transparent 45%
+    );
+  filter: blur(90px);
+  pointer-events: none;
+  z-index: 0;
+  animation: glowDrift 20s ease-in-out infinite alternate;
+}
+
+.explore .section-header {
+  position: relative;
+  z-index: 10;
+  margin-bottom: 80px;
+}
+
+.explore-grid {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.explore-card {
+  position: relative;
+  padding: 28px 20px;
+  text-align: left;
+  border-radius: 20px;
+  background: rgba(99, 102, 241, 0.04);
+  border: 1px solid rgba(129, 140, 248, 0.1);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition:
+    transform 0.35s ease,
+    border-color 0.35s ease,
+    background 0.35s ease;
+  overflow: hidden;
+}
+
+.explore-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at top left,
+    rgba(99, 102, 241, 0.12),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.explore-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(129, 140, 248, 0.3);
+  background: rgba(99, 102, 241, 0.07);
+}
+
+.explore-card:hover::before {
+  opacity: 1;
+}
+
+/* Node wrapper — same orbit-ring treatment as the timeline icons */
+.explore-node-wrap {
+  position: relative;
+  width: 66px;
+  height: 66px;
+  margin-bottom: 25px;
+}
+
+.explore-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed rgba(129, 140, 248, 0.45);
+  animation: spinRing 10s linear infinite;
+}
+
+.explore-card:nth-child(2) .explore-ring {
+  animation-direction: reverse;
+  animation-duration: 14s;
+}
+
+.explore-card:nth-child(3) .explore-ring {
+  animation-duration: 8s;
+}
+
+.explore-card:nth-child(4) .explore-ring {
+  animation-direction: reverse;
+  animation-duration: 12s;
+}
+
+.explore-card:nth-child(5) .explore-ring {
+  animation-duration: 16s;
+}
+
+.explore-card:nth-child(6) .explore-ring {
+  animation-direction: reverse;
+  animation-duration: 9s;
+}
+
+.explore-ring::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: #a855f7;
+  box-shadow: 0 0 8px 2px rgba(168, 85, 247, 0.9);
+}
+
+.explore-node {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 54px;
+  height: 54px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  font-size: 1.3rem;
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+  transition: box-shadow 0.35s ease;
+}
+
+.explore-card:hover .explore-node {
+  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
+}
+
+.explore-card:hover .explore-ring {
+  border-color: rgba(129, 140, 248, 0.75);
+}
+
+.explore-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+  font-weight: 600;
+  font-family: "Inter", sans-serif;
+  color: #eef0ff;
+}
+
+.explore-card p {
+  color: #9c9ac2;
+  line-height: 1.75;
+  font-size: 0.98rem;
+  font-family: "Inter", sans-serif;
+}
+
+.explore-buttons {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  margin-top: 70px;
+}
+
+.explore-button {
+  padding: 14px 30px !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: none !important;
+  min-width: 190px !important;
+
+  background: linear-gradient(135deg, #6366f1, #a855f7) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.35);
+  transition: all 0.35s ease !important;
+}
+
+.explore-button:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(135deg, #7477f5, #b968fb) !important;
+  box-shadow: 0 15px 40px rgba(99, 102, 241, 0.5);
+}
+
+.cursor-dot {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background: #a855f7;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.9);
+}
+
+.cursor-ring {
+  position: fixed;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(129, 140, 248, 0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9998;
+  backdrop-filter: blur(2px);
+  transition:
+    width 0.2s ease,
+    height 0.2s ease;
+}
+
+/* ===========================================
+   FOOTER
+=========================================== */
+
+/* ==========================================
+   FOOTER ORBIT BACKGROUND
+========================================== */
+.footer {
+  position: relative;
+  overflow: hidden;
+  background: #0a0716;
+  padding: 55px 8% 28px;
+  border-top: 1px solid rgba(129, 140, 248, 0.12);
+}
+
+.footer-brand a {
+  display: flex;
+  align-items: center;
+}
+
+.footer-logo {
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.footer-logo:hover {
+  transform: scale(1.05);
+}
+
+/* =========================
+   Animation
+========================= */
+
+.footer-animation {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.25;
+}
+
+.footer-orbit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+
+.footer-orbit-1 {
+  width: 520px;
+  height: 520px;
+  border: 1px solid rgba(129, 140, 248, 0.1);
+}
+
+.footer-orbit-2 {
+  width: 820px;
+  height: 820px;
+  border: 1px dashed rgba(129, 140, 248, 0.08);
+  animation: spinOrbit 80s linear infinite;
+}
+
+@keyframes spinOrbit {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.footer-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #818cf8;
+  box-shadow: 0 0 18px rgba(129, 140, 248, 0.9);
+}
+
+.footer-dot-1 {
+  offset-path: circle(260px at 50% 50%);
+  animation:
+    orbitMove 18s linear infinite,
+    dotPulse 3s ease-in-out infinite;
+}
+
+.footer-dot-2 {
+  offset-path: circle(410px at 50% 50%);
+  background: #c084fc;
+  box-shadow: 0 0 18px rgba(192, 132, 252, 0.9);
+  animation:
+    orbitMoveReverse 28s linear infinite,
+    dotPulse 3s ease-in-out infinite 0.8s;
+}
+
+@keyframes orbitMove {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}
+
+@keyframes orbitMoveReverse {
+  from {
+    offset-distance: 100%;
+  }
+  to {
+    offset-distance: 0%;
+  }
+}
+
+@keyframes dotPulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.4);
+  }
+}
+
+/* Center Glow */
+
+.footer::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 650px;
+  height: 650px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.1), transparent 70%);
+  filter: blur(90px);
+  z-index: 0;
+}
+
+/* =========================
+   Content
+========================= */
+
+.footer-container {
+  position: relative;
+  z-index: 2;
+  max-width: 1300px;
+  margin: auto;
+}
+
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.footer-logo {
+  width: 95px;
+  object-fit: contain;
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  color: #9c9ac2;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.footer-links a:hover {
+  color: #eef0ff;
+}
+
+.footer-social {
+  display: flex;
+  gap: 12px;
+}
+
+.footer-social a {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid rgba(129, 140, 248, 0.15);
+  color: #eef0ff;
+  transition: 0.3s;
+}
+
+.footer-social a:hover {
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  color: #ffffff;
+  transform: translateY(-3px);
+}
+
+.footer-bottom {
+  margin-top: 35px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(129, 140, 248, 0.12);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #7d7ba0;
+}
+
+.footer-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00ff84;
+  box-shadow: 0 0 10px #00ff84;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .footer {
+    padding: 40px 24px 24px;
+  }
+  .footer-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+  .footer-links {
+    gap: 16px;
+  }
+}
+/* Responsive */
+@media (max-width: 900px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 50px;
+  }
+  .footer-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer {
+    padding: 80px 24px 28px;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+  .footer-bottom {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+/* Responsive */
+
+@media (max-width: 900px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+
+    gap: 60px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+
+    gap: 12px;
+
+    text-align: center;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 80px 25px 35px;
+  }
+
+  .footer-links {
+    gap: 18px;
+  }
+
+  .footer h3 {
+    font-size: 28px;
+  }
+
+  .footer p {
+    font-size: 15px;
+  }
+}
+@media (max-width: 1100px) {
+  .explore-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .explore {
+    padding: 90px 24px;
+  }
+  .explore-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .explore .section-header {
+    margin-bottom: 50px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .timeline {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  .timeline-line {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .how-it-works {
+    padding: 90px 24px;
+  }
+  .timeline {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .section-header {
+    margin-bottom: 50px;
+  }
+  .section-header h2 {
+    font-size: 2.4rem;
+  }
+}
+
+/* ===========================================
+   RESPONSIVE
+=========================================== */
+
+@media (max-width: 1100px) {
+  .steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .how-it-works {
+    padding: 90px 24px;
+  }
+  .steps {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .section-header {
+    margin-bottom: 50px;
+  }
+  .section-header h2 {
+    font-size: 2.4rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .welcome-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 14px;
+  }
+  .welcome-buttons .MuiButton-root {
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .logo-img {
+    width: 90px;
+    margin-bottom: 28px;
+  }
+  .welcome-content {
+    gap: 18px;
+  }
+  .welcome-title {
+    font-size: 3.3rem;
+    letter-spacing: -2px;
+  }
+  .welcome-description {
+    font-size: 1rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .welcome {
+    padding: 24px 20px;
+  }
+  .logo-img {
+    width: 75px;
+  }
+  .welcome-title {
+    font-size: 2.4rem;
+    line-height: 1.12;
+    letter-spacing: -1px;
+  }
+  .welcome-tagline {
+    font-size: 0.75rem;
+    padding: 7px 14px;
+  }
+  .welcome-description {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+}

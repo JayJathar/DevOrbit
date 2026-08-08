@@ -1,0 +1,69 @@
+.timeline-step {
+  position: relative;
+  padding: 28px 20px;
+  text-align: left;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(6px);
+  transition: all 0.35s ease;
+}
+
+.timeline-node-wrap {
+  position: relative;
+  width: 66px;
+  height: 66px;
+  margin-bottom: 25px;
+}
+
+.timeline-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.35);
+  animation: spinRing 10s linear infinite;
+}
+
+.timeline-ring::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.timeline-node {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #fff;
+  color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+}
+
+.timeline-step h3 {
+  margin-bottom: 12px;
+}
+
+.timeline-step p {
+  color: #8d8d8d;
+}
+
+@keyframes spinRing {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

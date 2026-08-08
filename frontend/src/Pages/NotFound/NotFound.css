@@ -1,0 +1,276 @@
+/* ==========================================
+   404 PAGE — extends login-page theme
+========================================== */
+
+.notfound-page {
+  padding: 40px 0;
+}
+
+.notfound-container {
+  width: min(720px, 92%);
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: fadeUp 0.9s ease;
+}
+
+.notfound-logo {
+  height: 34px;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+/* ==========================================
+   STARFIELD
+========================================== */
+
+.star-field {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0;
+  animation-name: twinkle;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.2);
+  }
+}
+
+/* ==========================================
+   BIG ORBIT + ASTRONAUT SCENE
+========================================== */
+
+.astronaut-orbit {
+  position: relative;
+  width: 340px;
+  height: 340px;
+  margin: 8px auto 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.astronaut-orbit-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.astronaut-orbit-ring--outer {
+  width: 340px;
+  height: 340px;
+  animation: spin 40s linear infinite;
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.astronaut-orbit-ring--mid {
+  width: 260px;
+  height: 260px;
+  animation: spin 26s linear infinite reverse;
+}
+
+.astronaut-orbit-ring--inner {
+  width: 180px;
+  height: 180px;
+  animation: spin 16s linear infinite;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.orbit-satellite {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 12px 3px rgba(255, 255, 255, 0.6);
+}
+
+.orbit-satellite--a {
+  top: 8px;
+  left: 50%;
+  transform-origin: 0 162px;
+  animation: spin 26s linear infinite reverse;
+}
+
+.orbit-satellite--b {
+  top: 50%;
+  left: 8px;
+  width: 6px;
+  height: 6px;
+  transform-origin: 82px 0;
+  animation: spin 16s linear infinite;
+  opacity: 0.8;
+}
+
+.astronaut-float {
+  position: relative;
+  z-index: 3;
+  width: 150px;
+  animation: astronautDrift 6s ease-in-out infinite;
+  filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.55));
+}
+
+.astronaut-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@keyframes astronautDrift {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(-4deg);
+  }
+  50% {
+    transform: translate(6px, -16px) rotate(4deg);
+  }
+}
+
+/* ==========================================
+   TEXT
+========================================== */
+
+.notfound-code {
+  font-size: 96px !important;
+  font-weight: 900 !important;
+  letter-spacing: -4px !important;
+  line-height: 1 !important;
+  margin-top: 6px !important;
+
+  background: linear-gradient(90deg, #fff, #6b6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.notfound-title {
+  font-size: 30px !important;
+  font-weight: 700 !important;
+  margin: 6px 0 14px !important;
+}
+
+.notfound-subtitle {
+  max-width: 460px;
+  font-size: 16px !important;
+  line-height: 1.8;
+  color: #c5c5c5;
+  margin-bottom: 34px !important;
+}
+
+.login-page.light .notfound-subtitle {
+  color: #555;
+}
+
+/* ==========================================
+   ACTIONS
+========================================== */
+
+.notfound-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.notfound-btn {
+  min-width: 200px;
+  height: 56px;
+}
+
+.notfound-link-btn {
+  color: #cfcfcf !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  transition: 0.3s !important;
+}
+
+.notfound-link-btn:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.login-page.light .notfound-link-btn {
+  color: #333 !important;
+}
+
+.login-page.light .notfound-link-btn:hover {
+  color: #000 !important;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 600px) {
+  .astronaut-orbit {
+    width: 260px;
+    height: 260px;
+  }
+
+  .astronaut-orbit-ring--outer {
+    width: 260px;
+    height: 260px;
+  }
+
+  .astronaut-orbit-ring--mid {
+    width: 200px;
+    height: 200px;
+  }
+
+  .astronaut-orbit-ring--inner {
+    width: 140px;
+    height: 140px;
+  }
+
+  .astronaut-float {
+    width: 110px;
+  }
+
+  .notfound-code {
+    font-size: 68px !important;
+  }
+
+  .notfound-title {
+    font-size: 22px !important;
+  }
+
+  .notfound-actions {
+    flex-direction: column;
+  }
+
+  .notfound-btn,
+  .notfound-link-btn {
+    width: 100%;
+  }
+}

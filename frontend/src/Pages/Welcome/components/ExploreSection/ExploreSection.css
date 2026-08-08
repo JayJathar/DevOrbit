@@ -1,0 +1,282 @@
+.explore {
+  position: relative;
+  overflow: hidden;
+  background: #050505;
+  color: #ffffff;
+  padding: 140px 8%;
+}
+
+.explore::before {
+  content: "";
+  position: absolute;
+  inset: -200px;
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(255, 255, 255, 0.09),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 20% 80%,
+      rgba(255, 255, 255, 0.05),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(255, 255, 255, 0.05),
+      transparent 45%
+    );
+  filter: blur(90px);
+  pointer-events: none;
+  z-index: 0;
+  animation: glowDrift 20s ease-in-out infinite alternate;
+}
+
+@keyframes glowDrift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(20px, -15px) scale(1.05);
+  }
+  100% {
+    transform: translate(-15px, 15px) scale(1);
+  }
+}
+
+.explore .section-header {
+  position: relative;
+  z-index: 10;
+  margin-bottom: 80px;
+}
+
+.explore-grid {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.explore-card {
+  position: relative;
+  padding: 28px 20px;
+  text-align: left;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition:
+    transform 0.35s ease,
+    border-color 0.35s ease,
+    background 0.35s ease;
+  overflow: hidden;
+}
+
+.explore-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at top left,
+    rgba(255, 255, 255, 0.07),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.explore-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.explore-card:hover::before {
+  opacity: 1;
+}
+
+/* Node wrapper — same orbit-ring treatment as the timeline icons */
+.explore-node-wrap {
+  position: relative;
+  width: 66px;
+  height: 66px;
+  margin-bottom: 25px;
+}
+
+.explore-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.35);
+  animation: spinRing 10s linear infinite;
+}
+
+.explore-card:nth-child(2) .explore-ring {
+  animation-direction: reverse;
+  animation-duration: 14s;
+}
+
+.explore-card:nth-child(3) .explore-ring {
+  animation-duration: 8s;
+}
+
+.explore-card:nth-child(4) .explore-ring {
+  animation-direction: reverse;
+  animation-duration: 12s;
+}
+
+.explore-card:nth-child(5) .explore-ring {
+  animation-duration: 16s;
+}
+
+.explore-card:nth-child(6) .explore-ring {
+  animation-direction: reverse;
+  animation-duration: 9s;
+}
+
+@keyframes spinRing {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.explore-ring::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.8);
+}
+
+.explore-node {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 54px;
+  height: 54px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #ffffff;
+  font-size: 1.3rem;
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+  transition: box-shadow 0.35s ease;
+}
+
+.explore-card:hover .explore-node {
+  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.3);
+}
+
+.explore-card:hover .explore-ring {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.explore-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+  font-weight: 600;
+  font-family: "Inter", sans-serif;
+}
+
+.explore-card p {
+  color: #8d8d8d;
+  line-height: 1.75;
+  font-size: 0.98rem;
+  font-family: "Inter", sans-serif;
+}
+
+.explore-buttons {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  margin-top: 70px;
+}
+
+.enter-button {
+  padding: 14px 30px !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: none !important;
+  min-width: 190px !important;
+
+  background: #ffffff !important;
+  color: #050505 !important;
+
+  border: none !important;
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.18) !important;
+
+  transition: all 0.35s ease !important;
+}
+
+.enter-button:hover {
+  transform: translateY(-3px);
+  background: #f3f4f6 !important;
+  box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Leftover custom-cursor styles from the original file (not currently
+   rendered by any component — keeping them here in case they're wired
+   up to a mousemove handler later). */
+.cursor-dot {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background: #ffffff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+}
+
+.cursor-ring {
+  position: fixed;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9998;
+  backdrop-filter: blur(2px);
+  transition:
+    width 0.2s ease,
+    height 0.2s ease;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .explore-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .explore {
+    padding: 90px 24px;
+  }
+  .explore-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .explore .section-header {
+    margin-bottom: 50px;
+  }
+}

@@ -1,0 +1,408 @@
+/* ===========================================
+   REGISTER PAGE — matches Welcome/DevOrbit theme
+=========================================== */
+
+.register {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  color: white;
+  background: #0a0a0a;
+}
+
+/* Soft center glow, same treatment as .welcome::after */
+.register::after {
+  content: "";
+  position: absolute;
+  width: 700px;
+  height: 700px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.08),
+    transparent 70%
+  );
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+/* Reuse the orbit/dot background animation from Welcome.css */
+.register .background-animation {
+  position: absolute;
+  inset: -150px;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.register .orbit {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  margin: 0;
+  transform: translate(-50%, -50%);
+}
+
+.register .orbit-1 {
+  width: 420px;
+  height: 420px;
+}
+
+.register .orbit-2 {
+  width: 650px;
+  height: 650px;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.register .orbit-3 {
+  width: 900px;
+  height: 900px;
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+.register .dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 0 14px 3px rgba(255, 255, 255, 0.7);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.register .dot-1 {
+  offset-path: circle(210px at 50% 50%);
+  animation:
+    orbitMove 12s linear infinite,
+    dotPulse 3s ease-in-out infinite;
+}
+
+.register .dot-2 {
+  offset-path: circle(325px at 50% 50%);
+  animation:
+    orbitMoveReverse 20s linear infinite,
+    dotPulse 3s ease-in-out infinite 0.5s;
+}
+
+.register .dot-3 {
+  offset-path: circle(450px at 50% 50%);
+  animation:
+    orbitMove 32s linear infinite,
+    dotPulse 3s ease-in-out infinite 1s;
+}
+
+.register .dot-4 {
+  offset-path: circle(450px at 50% 50%);
+  offset-distance: 50%;
+  animation:
+    orbitMoveReverse 32s linear infinite,
+    dotPulse 3s ease-in-out infinite 1.8s;
+}
+
+@keyframes orbitMove {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}
+
+@keyframes orbitMoveReverse {
+  from {
+    offset-distance: 100%;
+  }
+  to {
+    offset-distance: 0%;
+  }
+}
+
+@keyframes dotPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.6);
+  }
+}
+
+/* ===========================================
+   CARD
+=========================================== */
+
+.register-card {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 430px;
+  padding: 28px 40px 24px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.register-logo {
+  margin-bottom: 6px;
+}
+
+.register-logo .logo-img {
+  width: 46px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 0 18px rgb(251, 247, 247));
+  animation: smoothFloat 3s ease-in-out infinite;
+}
+
+/* Terms Checkbox */
+.terms-options {
+  display: flex;
+  align-items: center;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.terms-options .MuiFormControlLabel-root {
+  margin: 0;
+  align-items: center;
+}
+
+.terms-options .MuiFormControlLabel-label {
+  font-size: 13.5px;
+  color: var(--fg-dim);
+  line-height: 1.5;
+}
+
+.terms-options .MuiCheckbox-root {
+  color: var(--fg-dim);
+  padding: 4px;
+}
+
+.inline-link {
+  color: var(--fg);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.inline-link:hover {
+  text-decoration: underline;
+}
+.css-rizt0-MuiTypography-root {
+  margin: 0;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 0.00938em;
+}
+
+@keyframes floating {
+  0% {
+    transform: translateY(0px);
+  }
+  25% {
+    transform: translateY(-6px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  75% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.register-tagline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 12px;
+  background: #171616 !important;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0px;
+  color: #d1d5db;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: ui-monospace, monospace;
+  margin-bottom: 8px;
+}
+
+.register-title {
+  margin: 0 0 6px;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  font-family: serif;
+  color: white;
+}
+
+.register-subtitle {
+  margin: 0 0 18px;
+  max-width: 360px;
+  font-size: 13.5px;
+  line-height: 19px;
+  color: #b0b0b0;
+  font-family: "Inter", sans-serif;
+}
+
+/* ===========================================
+   FORM
+=========================================== */
+
+.register-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* MUI TextField dark theme overrides */
+.register-field .MuiOutlinedInput-root {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #ffffff;
+  font-family: "Inter", sans-serif;
+}
+
+.register-field .MuiOutlinedInput-input {
+  padding: 12px 14px;
+}
+
+.register-field .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.register-field:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.register-field .Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #ffffff !important;
+  border-width: 1px;
+}
+
+.register-field .MuiInputLabel-root {
+  color: #8b8b8b;
+  font-family: "Inter", sans-serif;
+}
+
+.register-field .MuiInputLabel-root.Mui-focused {
+  color: #ffffff;
+}
+
+.register-field .MuiOutlinedInput-input {
+  color: #ffffff;
+}
+
+.register-field .MuiOutlinedInput-input:-webkit-autofill {
+  -webkit-text-fill-color: #ffffff;
+  -webkit-box-shadow: 0 0 0px 1000px #101010 inset;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+.register-eye-btn {
+  color: #8b8b8b !important;
+}
+
+.register-eye-btn:hover {
+  color: #ffffff !important;
+}
+
+/* Primary submit button — mirrors .join-btn */
+.register-submit-btn {
+  margin-top: 2px !important;
+  padding: 11px 30px !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: none !important;
+  transition: all 0.35s ease !important;
+
+  background: #ffffff !important;
+  color: #050505 !important;
+  border: none !important;
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.18);
+}
+
+.register-submit-btn:hover {
+  transform: translateY(-3px);
+  background: #f3f4f6 !important;
+  box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3);
+}
+
+.register-submit-btn:active {
+  transform: scale(0.97);
+}
+
+.register-login-text {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #9ca3af;
+  font-family: "Inter", sans-serif;
+}
+
+.register-login-text a {
+  color: #ffffff;
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 4px;
+}
+
+.register-login-text a:hover {
+  text-decoration: underline;
+}
+
+/* ===========================================
+   RESPONSIVE
+=========================================== */
+
+@media (max-width: 600px) {
+  .register {
+    padding: 40px 16px;
+  }
+
+  .register-card {
+    padding: 24px 20px 20px;
+    border-radius: 16px;
+  }
+
+  .register-title {
+    font-size: 24px;
+    letter-spacing: -1px;
+  }
+
+  .register-subtitle {
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+
+  .register-form {
+    gap: 10px;
+  }
+}

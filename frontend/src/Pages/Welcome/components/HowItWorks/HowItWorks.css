@@ -1,0 +1,333 @@
+.how-it-works.dark {
+  --bg: #060606;
+  --fg: #f6f6f4;
+  --fg-dim: #9a9a9a;
+  --fg-faint: #6b6b6b;
+  --line: rgba(255, 255, 255, 0.14);
+  --line-soft: rgba(255, 255, 255, 0.07);
+  --card-bg: rgba(15, 15, 15, 0.7);
+}
+
+.how-it-works.light {
+  --bg: #fafaf8;
+  --fg: #0c0c0c;
+  --fg-dim: #55554f;
+  --fg-faint: #8a8a84;
+  --line: rgba(0, 0, 0, 0.12);
+  --line-soft: rgba(0, 0, 0, 0.06);
+  --card-bg: rgba(255, 255, 255, 0.85);
+}
+
+.how-it-works {
+  position: relative;
+  overflow: hidden;
+  padding: 140px 8%;
+  background: rgb(0 0 0 / 93%);
+  color: var(--fg);
+  transition:
+    background 0.4s ease,
+    color 0.4s ease;
+}
+
+.how-it-works::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  background:
+    /* Dark vignette from the right */
+    linear-gradient(
+      to left,
+      rgba(5, 5, 5, 1) 0%,
+      rgba(5, 5, 5, 0.7) 18%,
+      transparent 45%
+    ),
+    /* Existing glows */
+    radial-gradient(
+        circle at 50% 45%,
+        rgba(255, 255, 255, 0.09),
+        transparent 40%
+      ),
+    radial-gradient(
+      circle at 20% 80%,
+      rgba(255, 255, 255, 0.05),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(255, 255, 255, 0.05),
+      transparent 45%
+    );
+
+  filter: blur(90px);
+  animation: glowDrift 20s ease-in-out infinite alternate;
+}
+
+@keyframes glowDrift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(20px, -15px) scale(1.05);
+  }
+  100% {
+    transform: translate(-15px, 15px) scale(1);
+  }
+}
+
+.orbit {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 0 25px rgba(255, 255, 255, 0.04),
+    inset 0 0 20px rgba(255, 255, 255, 0.02);
+}
+
+.orbit-1 {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.orbit-2 {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.orbit-3 {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.section-header,
+.timeline {
+  position: relative;
+  z-index: 10;
+}
+
+.section-header {
+  text-align: center;
+  max-width: 750px;
+  margin: 0 auto 100px;
+}
+
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #cfcfcf;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-family: ui-monospace, monospace;
+  font-weight: 500;
+}
+
+.section-header h2 {
+  margin-top: 24px;
+  margin-bottom: 18px;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -2px;
+  font-family: serif;
+  background: linear-gradient(180deg, #ffffff 0%, #9a9a9a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: #ffffff;
+}
+
+.section-header p {
+  color: #8b8b8b;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  font-family: "Inter", sans-serif;
+}
+
+/* ===========================================
+   TIMELINE — orbital connector + orbit-ring nodes
+=========================================== */
+
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  max-width: 1400px;
+  margin: auto;
+}
+
+/* Dashed orbital path instead of a plain line */
+.timeline-line {
+  position: absolute;
+  top: 33px;
+  left: calc(12.5% - 20px);
+  right: calc(12.5% - 20px);
+  height: 0;
+  border-top: 1px dashed rgba(255, 255, 255, 0.2);
+  z-index: -1;
+}
+
+.timeline-step {
+  position: relative;
+  padding: 28px 20px;
+  text-align: left;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition:
+    transform 0.35s ease,
+    border-color 0.35s ease,
+    background 0.35s ease;
+  overflow: hidden;
+}
+
+.timeline-step::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at top left,
+    rgba(255, 255, 255, 0.07),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.timeline-step:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.timeline-step:hover::before {
+  opacity: 1;
+}
+
+/* Node wrapper — holds the spinning orbit ring + the solid number circle */
+.timeline-node-wrap {
+  position: relative;
+  width: 66px;
+  height: 66px;
+  margin-bottom: 25px;
+}
+
+/* Spinning dashed ring, like a tiny orbit around each step number */
+.timeline-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.35);
+  animation: spinRing 10s linear infinite;
+}
+
+/* NOTE: nth-child counts .timeline-line as child 1, so the step cards
+   are children 2-5. These selectors give each ring a distinct spin. */
+.timeline-step:nth-child(3) .timeline-ring {
+  animation-direction: reverse;
+  animation-duration: 14s;
+}
+
+.timeline-step:nth-child(4) .timeline-ring {
+  animation-duration: 8s;
+}
+
+.timeline-step:nth-child(5) .timeline-ring {
+  animation-direction: reverse;
+  animation-duration: 12s;
+}
+
+@keyframes spinRing {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* A tiny satellite dot riding the ring's edge */
+.timeline-ring::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.8);
+}
+
+.timeline-node {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 54px;
+  height: 54px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #000;
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+  transition: box-shadow 0.35s ease;
+}
+
+.timeline-step:hover .timeline-node {
+  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.3);
+}
+
+.timeline-step:hover .timeline-ring {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.timeline-step h3 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: white;
+  font-family: "Inter", sans-serif;
+}
+
+.timeline-step p {
+  color: #8d8d8d;
+  line-height: 1.75;
+  font-size: 0.98rem;
+  font-family: "Inter", sans-serif;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .timeline {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  .timeline-line {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .how-it-works {
+    padding: 90px 24px;
+  }
+  .timeline {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .section-header {
+    margin-bottom: 50px;
+  }
+  .section-header h2 {
+    font-size: 2.4rem;
+  }
+}
