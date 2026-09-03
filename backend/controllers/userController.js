@@ -204,12 +204,30 @@ const loginUser = async (req, res) => {
 // Get Profile Controller
 const getProfile = async (req, res) => {
   try {
+    // Get logged-in user's ID from JWT
+    const userId = req.user.id;
+
+    // Find the actual user in MongoDB
+    const user = await User.findById(userId).select("-password");
+
+    // Check if user exists
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    console.log("USER FROM MONGODB:", user);
+
     res.status(200).json({
       success: true,
       message: "Profile Fetched Successfully",
-      user: req.user,
+      user: user,
     });
   } catch (error) {
+    console.error("❌ Get Profile Error:", error);
+
     res.status(500).json({
       success: false,
       message: "Failed to Fetch Profile",

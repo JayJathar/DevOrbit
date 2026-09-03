@@ -10,7 +10,7 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import { DarkMode, LightMode } from "@mui/icons-material";
+// import { DarkMode, LightMode } from "@mui/icons-material";
 import BackgroundAnimation from "../Welcome/components/BackgroundAnimation/BackgroundAnimation";
 import devlogo from "../../assets/devlogo.svg";
 
@@ -49,8 +49,8 @@ export default function ForgotPassword() {
 
   // ---------------- Theme ----------------
 
-  const [darkMode, setDarkMode] = useState(true);
-  const toggleTheme = () => setDarkMode(!darkMode);
+  // const [darkMode, setDarkMode] = useState(true);
+  // const toggleTheme = () => setDarkMode(!darkMode);
 
   // ---------------- Form ----------------
 
@@ -183,7 +183,8 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className={darkMode ? "reset-page dark" : "reset-page light"}>
+    // <div className={darkMode ? "reset-page dark" : "reset-page light"}>
+    <div className="reset-page dark">
       <BackgroundAnimation />
 
       {/* Signature orbit mark */}
@@ -198,11 +199,11 @@ export default function ForgotPassword() {
       </div>
 
       {/* Theme Toggle */}
-      <div className="reset-theme-toggle">
+      {/* <div className="reset-theme-toggle">
         <IconButton onClick={toggleTheme}>
           {darkMode ? <LightMode /> : <DarkMode />}
         </IconButton>
-      </div>
+      </div> */}
 
       <Box className="reset-container">
         {/* Left Side */}

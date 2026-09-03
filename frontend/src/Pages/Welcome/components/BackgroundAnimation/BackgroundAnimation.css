@@ -1,16 +1,54 @@
-/* ===========================================
-    THEME VARIABLES
-  =========================================== */
+/* =========================================================
+   DEVORBIT — BACKGROUND ANIMATION
+   OBSIDIAN ORBIT
+   Fully Fluid / Responsive for Every Screen
+========================================================= */
 
-/* ===========================================
-    BACKGROUND GRID
-  =========================================== */
+/* =========================================================
+   THEME VARIABLES
+========================================================= */
+
+:root {
+  --line: rgba(255, 255, 255, 0.08);
+  --glow: rgba(255, 255, 255, 0.055);
+
+  --dot-color: #ffffff;
+  --dot-glow: rgba(255, 255, 255, 0.8);
+
+  --cursor-ring: rgba(255, 255, 255, 0.5);
+
+  /* -----------------------------------------------------
+     FLUID SIZE TOKENS
+     clamp(min, preferred-vw, max) lets every value scale
+     continuously with viewport width instead of jumping
+     at fixed breakpoints. Tune the vw multiplier to taste.
+  ----------------------------------------------------- */
+
+  --grid-size: clamp(16px, 2vw, 26px);
+
+  --orbit-1-size: clamp(140px, 20vw, 460px);
+  --orbit-2-size: clamp(230px, 32vw, 700px);
+  --orbit-3-size: clamp(330px, 45vw, 980px);
+
+  --dot-1-radius: calc(var(--orbit-1-size) / 2);
+  --dot-2-radius: calc(var(--orbit-2-size) / 2);
+  --dot-3-radius: calc(var(--orbit-3-size) / 2);
+
+  --dot-size: clamp(6px, 0.7vw, 9px);
+}
+
+/* =========================================================
+   BACKGROUND CONTAINER
+========================================================= */
 
 .background-animation {
   position: absolute;
   inset: 0;
+
   overflow: hidden;
+
   pointer-events: none;
+
   z-index: 0;
 }
 
@@ -18,13 +56,17 @@
   opacity: 1;
 }
 
+/* =========================================================
+   BACKGROUND GRID
+========================================================= */
+
 .background-grid {
   position: absolute;
   inset: 0;
 
   background-image: radial-gradient(var(--line) 1px, transparent 1px);
 
-  background-size: 26px 26px;
+  background-size: var(--grid-size) var(--grid-size);
 }
 
 .background-grid::before {
@@ -46,9 +88,9 @@
     );
 }
 
-/* ===========================================
-    ORBITS
-  =========================================== */
+/* =========================================================
+   ORBITS
+========================================================= */
 
 .orbit {
   position: absolute;
@@ -59,36 +101,59 @@
   transform: translate(-50%, -50%);
 
   border-radius: 50%;
+
   border: 1px solid var(--line);
 
   animation: orbitFloat 10s ease-in-out infinite;
+
+  pointer-events: none;
 }
 
 .orbit-1 {
-  width: 420px;
-  height: 420px;
+  width: var(--orbit-1-size);
+  height: var(--orbit-1-size);
 }
 
 .orbit-2 {
-  width: 650px;
-  height: 650px;
-  border-color: whitesmoke;
+  width: var(--orbit-2-size);
+  height: var(--orbit-2-size);
+
+  border-color: rgba(255, 255, 255, 0.16);
+
   animation-delay: 1.5s;
 }
 
 .orbit-3 {
-  width: 900px;
-  height: 900px;
+  width: var(--orbit-3-size);
+  height: var(--orbit-3-size);
+
   animation-delay: 3s;
 }
 
-/* ===========================================
-    MOVING DOTS
-  =========================================== */
+/* =========================================================
+   ORBIT GLOW
+========================================================= */
 
-/* ===========================================
+.orbit::before {
+  content: "";
+
+  position: absolute;
+  inset: -1px;
+
+  border-radius: inherit;
+
+  border: inherit;
+
+  opacity: 0.15;
+
+  filter: blur(10px);
+
+  pointer-events: none;
+}
+
+/* =========================================================
    MOVING DOTS
-=========================================== */
+========================================================= */
 
 .dot {
   position: absolute;
@@ -96,15 +161,14 @@
   top: 50%;
   left: 50%;
 
-  width: 9px;
-  height: 9px;
+  width: var(--dot-size);
+  height: var(--dot-size);
 
-  margin: -4.5px;
+  margin: calc(var(--dot-size) / -2);
 
   border-radius: 50%;
 
-  /* Always White */
-  background: #ffffff;
+  background: var(--dot-color);
 
   box-shadow:
     0 0 8px rgba(255, 255, 255, 0.9),
@@ -113,31 +177,69 @@
 
   animation-timing-function: linear;
   animation-iteration-count: infinite;
+
+  pointer-events: none;
 }
 
+.dot::after {
+  content: "";
+
+  position: absolute;
+
+  inset: -8px;
+
+  border-radius: 50%;
+
+  background: radial-gradient(circle, var(--dot-glow), transparent 70%);
+
+  opacity: 0.6;
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   DOT 1
+========================================================= */
+
 .dot-1 {
-  offset-path: circle(210px at 50% 50%);
+  offset-path: circle(var(--dot-1-radius) at 50% 50%);
+
   animation:
     orbitMove 12s linear infinite,
     dotPulse 3s ease-in-out infinite;
 }
 
+/* =========================================================
+   DOT 2
+========================================================= */
+
 .dot-2 {
-  offset-path: circle(325px at 50% 50%);
+  offset-path: circle(var(--dot-2-radius) at 50% 50%);
+
   animation:
     orbitMoveReverse 20s linear infinite,
     dotPulse 3s ease-in-out infinite 0.6s;
 }
 
+/* =========================================================
+   DOT 3
+========================================================= */
+
 .dot-3 {
-  offset-path: circle(450px at 50% 50%);
+  offset-path: circle(var(--dot-3-radius) at 50% 50%);
+
   animation:
     orbitMove 32s linear infinite,
     dotPulse 3s ease-in-out infinite 1.2s;
 }
 
+/* =========================================================
+   DOT 4
+========================================================= */
+
 .dot-4 {
-  offset-path: circle(450px at 50% 50%);
+  offset-path: circle(var(--dot-3-radius) at 50% 50%);
+
   offset-distance: 50%;
 
   animation:
@@ -145,13 +247,23 @@
     dotPulse 3s ease-in-out infinite 1.8s;
 }
 
-/* ===========================================
-    CURSOR
-  =========================================== */
+/* =========================================================
+   CUSTOM CURSOR
+========================================================= */
+
+/*
+   Keep the normal cursor visible by default.
+   This prevents the page from becoming unusable if
+   the custom cursor component hasn't mounted yet.
+*/
 
 body {
-  cursor: none;
+  cursor: default;
 }
+
+/* =========================================================
+   CURSOR DOT
+========================================================= */
 
 .cursor-dot {
   position: fixed;
@@ -177,6 +289,10 @@ body {
   animation: cursorPulse 2s ease-in-out infinite;
 }
 
+/* =========================================================
+   CURSOR RING
+========================================================= */
+
 .cursor-ring {
   position: fixed;
 
@@ -184,6 +300,7 @@ body {
   height: 34px;
 
   border-radius: 50%;
+
   border: 1.5px solid var(--cursor-ring);
 
   transform: translate(-50%, -50%);
@@ -199,11 +316,30 @@ body {
   transition:
     left 0.12s linear,
     top 0.12s linear,
-    opacity 0.2s;
+    opacity 0.2s ease;
 }
-/* ===========================================
-    CURSOR EFFECTS
-  =========================================== */
+
+/* =========================================================
+   CURSOR AURA
+========================================================= */
+
+.cursor-dot::after {
+  content: "";
+
+  position: absolute;
+
+  inset: -10px;
+
+  border-radius: 50%;
+
+  background: radial-gradient(circle, var(--dot-glow) 0%, transparent 60%);
+
+  animation: cursorAura 3s ease-in-out infinite;
+}
+
+/* =========================================================
+   CURSOR EFFECT TRANSITIONS
+========================================================= */
 
 .cursor-dot,
 .cursor-ring {
@@ -213,79 +349,23 @@ body {
     top 0.12s linear;
 }
 
-.cursor-dot::after {
-  content: "";
-  position: absolute;
-  inset: -10px;
-  border-radius: 50%;
-
-  background: radial-gradient(circle, var(--dot-glow) 0%, transparent 60%);
-
-  animation: cursorAura 3s ease-in-out infinite;
-}
-
-@keyframes cursorPulse {
-  0%,
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-
-    box-shadow:
-      0 0 8px var(--dot-glow),
-      0 0 18px var(--dot-glow),
-      0 0 35px var(--dot-glow),
-      0 0 60px var(--dot-glow);
-  }
-
-  50% {
-    transform: translate(-50%, -50%) scale(1.35);
-
-    box-shadow:
-      0 0 12px var(--dot-glow),
-      0 0 25px var(--dot-glow),
-      0 0 45px var(--dot-glow),
-      0 0 80px var(--dot-glow);
-  }
-}
-
-@keyframes cursorAura {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.5;
-  }
-
-  50% {
-    transform: scale(1.8);
-    opacity: 0;
-  }
-}
-
-@keyframes cursorFloat {
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-
-  50% {
-    transform: translate(-50%, -50%) scale(1.08);
-  }
-
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-/* ===========================================
-    PARTICLES
-  =========================================== */
+/* =========================================================
+   PARTICLE CONTAINER
+========================================================= */
 
 .particle-container {
   position: fixed;
+
   inset: 0;
 
   pointer-events: none;
 
   z-index: 99990;
 }
+
+/* =========================================================
+   ORBIT PARTICLES
+========================================================= */
 
 .orbit-particle {
   position: fixed;
@@ -311,6 +391,7 @@ body {
   content: "";
 
   position: absolute;
+
   inset: -2px;
 
   border-radius: inherit;
@@ -321,6 +402,137 @@ body {
 
   opacity: 0.45;
 }
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+/* Orbit movement */
+
+@keyframes orbitMove {
+  from {
+    offset-distance: 0%;
+  }
+
+  to {
+    offset-distance: 100%;
+  }
+}
+
+@keyframes orbitMoveReverse {
+  from {
+    offset-distance: 100%;
+  }
+
+  to {
+    offset-distance: 0%;
+  }
+}
+
+/* Orbit floating */
+
+@keyframes orbitFloat {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  25% {
+    transform: translate(-50%, -50%) scale(1.01);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.02);
+  }
+
+  75% {
+    transform: translate(-50%, -50%) scale(1.01);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Dot pulse */
+
+@keyframes dotPulse {
+  0%,
+  100% {
+    opacity: 0.45;
+
+    transform: scale(1);
+
+    filter: brightness(1);
+  }
+
+  50% {
+    opacity: 1;
+
+    transform: scale(1.5);
+
+    filter: brightness(1.8);
+  }
+}
+
+/* Cursor pulse */
+
+@keyframes cursorPulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+
+    box-shadow:
+      0 0 8px var(--dot-glow),
+      0 0 18px var(--dot-glow),
+      0 0 35px var(--dot-glow),
+      0 0 60px var(--dot-glow);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.35);
+
+    box-shadow:
+      0 0 12px var(--dot-glow),
+      0 0 25px var(--dot-glow),
+      0 0 45px var(--dot-glow),
+      0 0 80px var(--dot-glow);
+  }
+}
+
+/* Cursor aura */
+
+@keyframes cursorAura {
+  0%,
+  100% {
+    transform: scale(1);
+
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scale(1.8);
+
+    opacity: 0;
+  }
+}
+
+/* Cursor ring */
+
+@keyframes cursorFloat {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Particle */
 
 @keyframes orbitParticle {
   0% {
@@ -346,108 +558,9 @@ body {
   }
 }
 
-/* ===========================================
-    EXTRA GLOW
-  =========================================== */
-
-.orbit::before {
-  content: "";
-
-  position: absolute;
-  inset: -1px;
-
-  border-radius: inherit;
-
-  border: inherit;
-
-  opacity: 0.15;
-
-  filter: blur(10px);
-}
-
-.dot::after {
-  content: "";
-
-  position: absolute;
-  inset: -8px;
-
-  border-radius: 50%;
-
-  background: radial-gradient(circle, var(--dot-glow), transparent 70%);
-
-  opacity: 0.6;
-} /* ===========================================
-    ORBIT ANIMATIONS
-  =========================================== */
-
-@keyframes orbitMove {
-  from {
-    offset-distance: 0%;
-  }
-
-  to {
-    offset-distance: 100%;
-  }
-}
-
-@keyframes orbitMoveReverse {
-  from {
-    offset-distance: 100%;
-  }
-
-  to {
-    offset-distance: 0%;
-  }
-}
-
-/* ===========================================
-    ORBIT FLOAT
-  =========================================== */
-
-@keyframes orbitFloat {
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-
-  25% {
-    transform: translate(-50%, -50%) scale(1.01);
-  }
-
-  50% {
-    transform: translate(-50%, -50%) scale(1.02);
-  }
-
-  75% {
-    transform: translate(-50%, -50%) scale(1.01);
-  }
-
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-/* ===========================================
-    DOT PULSE
-  =========================================== */
-
-@keyframes dotPulse {
-  0%,
-  100% {
-    opacity: 0.45;
-    transform: scale(1);
-    filter: brightness(1);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.5);
-    filter: brightness(1.8);
-  }
-}
-
-/* ===========================================
-    SMOOTH RENDERING
-  =========================================== */
+/* =========================================================
+   PERFORMANCE
+========================================================= */
 
 .orbit,
 .dot,
@@ -455,59 +568,35 @@ body {
 .cursor-ring,
 .orbit-particle {
   will-change: transform, opacity;
+
   backface-visibility: hidden;
+
   transform-style: preserve-3d;
 }
 
-/* ===========================================
-    REDUCE MOTION
-  =========================================== */
+/* =========================================================
+   TOUCH / NO-HOVER DEVICES
+   Catches phones, tablets, and touch laptops regardless
+   of screen width — more reliable than width alone.
+========================================================= */
 
-@media (prefers-reduced-motion: reduce) {
-  .orbit,
-  .dot,
+@media (hover: none), (pointer: coarse) {
+  body {
+    cursor: auto;
+  }
+
   .cursor-dot,
   .cursor-ring,
-  .orbit-particle,
-  .background-grid::before {
-    animation: none !important;
-    transition: none !important;
+  .particle-container {
+    display: none;
   }
 }
 
-/* ===========================================
-    RESPONSIVE
-  =========================================== */
-
-@media (max-width: 1024px) {
-  .orbit-1 {
-    width: 340px;
-    height: 340px;
-  }
-
-  .orbit-2 {
-    width: 520px;
-    height: 520px;
-  }
-
-  .orbit-3 {
-    width: 700px;
-    height: 700px;
-  }
-
-  .dot-1 {
-    offset-path: circle(170px at 50% 50%);
-  }
-
-  .dot-2 {
-    offset-path: circle(260px at 50% 50%);
-  }
-
-  .dot-3,
-  .dot-4 {
-    offset-path: circle(350px at 50% 50%);
-  }
-}
+/* =========================================================
+   NARROW SCREENS (<= 768px)
+   Belt-and-braces fallback for browsers that don't
+   support hover/pointer media features.
+========================================================= */
 
 @media (max-width: 768px) {
   body {
@@ -519,72 +608,35 @@ body {
   .particle-container {
     display: none;
   }
+}
 
-  .orbit-1 {
-    width: 260px;
-    height: 260px;
-  }
+/* =========================================================
+   SHORT VIEWPORTS / LANDSCAPE PHONES
+   Height-based orbits so they never overflow a short
+   window, independent of width.
+========================================================= */
 
-  .orbit-2 {
-    width: 420px;
-    height: 420px;
-  }
-
-  .orbit-3 {
-    width: 560px;
-    height: 560px;
-  }
-
-  .dot {
-    width: 7px;
-    height: 7px;
-    margin: -3.5px;
-  }
-
-  .dot-1 {
-    offset-path: circle(130px at 50% 50%);
-  }
-
-  .dot-2 {
-    offset-path: circle(210px at 50% 50%);
-  }
-
-  .dot-3,
-  .dot-4 {
-    offset-path: circle(280px at 50% 50%);
+@media (max-height: 480px) and (orientation: landscape) {
+  :root {
+    --orbit-1-size: clamp(120px, 30vh, 300px);
+    --orbit-2-size: clamp(190px, 46vh, 460px);
+    --orbit-3-size: clamp(260px, 62vh, 620px);
   }
 }
 
-@media (max-width: 480px) {
-  .background-grid {
-    background-size: 20px 20px;
-  }
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
 
-  .orbit-1 {
-    width: 180px;
-    height: 180px;
-  }
+@media (prefers-reduced-motion: reduce) {
+  .orbit,
+  .dot,
+  .cursor-dot,
+  .cursor-ring,
+  .orbit-particle,
+  .background-grid::before {
+    animation: none !important;
 
-  .orbit-2 {
-    width: 300px;
-    height: 300px;
-  }
-
-  .orbit-3 {
-    width: 420px;
-    height: 420px;
-  }
-
-  .dot-1 {
-    offset-path: circle(90px at 50% 50%);
-  }
-
-  .dot-2 {
-    offset-path: circle(150px at 50% 50%);
-  }
-
-  .dot-3,
-  .dot-4 {
-    offset-path: circle(210px at 50% 50%);
+    transition: none !important;
   }
 }

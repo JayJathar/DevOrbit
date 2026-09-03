@@ -382,6 +382,20 @@
    RESPONSIVE
 =========================================== */
 
+@media (max-width: 480px) {
+  .terms-options .MuiFormControlLabel-label {
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+  }
+ 
+  .terms-options .inline-link {
+    font-size: 12px !important;
+  }
+
+  
+  
+}
+
 @media (max-width: 600px) {
   .register {
     padding: 40px 16px;

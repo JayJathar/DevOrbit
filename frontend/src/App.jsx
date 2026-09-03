@@ -40,7 +40,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/Explore"
           element={

@@ -1,100 +1,129 @@
+/* =========================================================
+   DEVORBIT — HOW IT WORKS
+   OBSIDIAN ORBIT
+   FULL RESPONSIVE SYSTEM
+   320px → 4K+
+========================================================= */
+
+/* =========================================================
+   THEME
+========================================================= */
+
 .how-it-works.dark {
   --bg: #060606;
   --fg: #f6f6f4;
   --fg-dim: #9a9a9a;
   --fg-faint: #6b6b6b;
+
   --line: rgba(255, 255, 255, 0.14);
   --line-soft: rgba(255, 255, 255, 0.07);
+
   --card-bg: rgba(15, 15, 15, 0.7);
+
+  --accent: #ffffff;
 }
 
 .how-it-works.light {
-  --bg: #fafaf8;
-  --fg: #0c0c0c;
-  --fg-dim: #55554f;
-  --fg-faint: #8a8a84;
-  --line: rgba(0, 0, 0, 0.12);
-  --line-soft: rgba(0, 0, 0, 0.06);
-  --card-bg: rgba(255, 255, 255, 0.85);
 }
+
+/* =========================================================
+   GLOBAL BOX SIZING
+========================================================= */
+
+.how-it-works,
+.how-it-works *,
+.how-it-works *::before,
+.how-it-works *::after {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   SECTION
+========================================================= */
 
 .how-it-works {
   position: relative;
+
+  width: 100%;
+  min-width: 0;
+
+  min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
+
+  padding: clamp(60px, 8vh, 110px) clamp(16px, 6vw, 100px);
+
   overflow: hidden;
-  padding: 140px 8%;
-  background: rgb(0 0 0 / 93%);
+
+  background: rgb(0 0 0 / 93%) !important;
   color: var(--fg);
+
+  isolation: isolate;
+
   transition:
     background 0.4s ease,
     color 0.4s ease;
 }
 
+/* =========================================================
+   BACKGROUND GLOW
+========================================================= */
+
 .how-it-works::before {
   content: "";
   position: absolute;
   inset: 0;
+
   z-index: 0;
   pointer-events: none;
 
-  background:
-    /* Dark vignette from the right */
-    linear-gradient(
-      to left,
-      rgba(5, 5, 5, 1) 0%,
-      rgba(5, 5, 5, 0.7) 18%,
-      transparent 45%
-    ),
-    /* Existing glows */
-    radial-gradient(
-        circle at 50% 45%,
-        rgba(255, 255, 255, 0.09),
-        transparent 40%
-      ),
-    radial-gradient(
-      circle at 20% 80%,
-      rgba(255, 255, 255, 0.05),
-      transparent 45%
-    ),
-    radial-gradient(
-      circle at 80% 20%,
-      rgba(255, 255, 255, 0.05),
-      transparent 45%
-    );
+  background: #000000;
 
-  filter: blur(90px);
-  animation: glowDrift 20s ease-in-out infinite alternate;
+  filter: none;
+  animation: none;
+
+  will-change: auto;
 }
 
 @keyframes glowDrift {
   0% {
-    transform: translate(0, 0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
   50% {
-    transform: translate(20px, -15px) scale(1.05);
+    transform: translate3d(20px, -15px, 0) scale(1.05);
   }
   100% {
-    transform: translate(-15px, 15px) scale(1);
+    transform: translate3d(-15px, 15px, 0) scale(1);
   }
 }
 
+/* =========================================================
+   ORBIT
+========================================================= */
+
 .orbit {
   border: 1px solid rgba(255, 255, 255, 0.16);
+
   box-shadow:
     0 0 25px rgba(255, 255, 255, 0.04),
     inset 0 0 20px rgba(255, 255, 255, 0.02);
+
+  pointer-events: none;
 }
 
 .orbit-1 {
   border-color: rgba(255, 255, 255, 0.22);
 }
-
 .orbit-2 {
   border-color: rgba(255, 255, 255, 0.16);
 }
-
 .orbit-3 {
   border-color: rgba(255, 255, 255, 0.12);
 }
+
+/* =========================================================
+   CONTENT
+========================================================= */
 
 .section-header,
 .timeline {
@@ -102,121 +131,206 @@
   z-index: 10;
 }
 
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
 .section-header {
+  width: 100%;
+  max-width: clamp(600px, 60vw, 800px);
+  margin: 0 auto clamp(36px, 5vw, 70px);
   text-align: center;
-  max-width: 750px;
-  margin: 0 auto 100px;
 }
 
 .section-tag {
   display: inline-flex;
   align-items: center;
-  padding: 8px 18px;
+  justify-content: center;
+
+  width: fit-content;
+  max-width: 100%;
+
+  padding: clamp(6px, 0.8vw, 8px) clamp(11px, 1.4vw, 18px);
+
   border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+
   background: rgba(255, 255, 255, 0.04);
+
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+
   color: #cfcfcf;
-  font-size: 0.75rem;
-  letter-spacing: 1.5px;
+
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: clamp(8px, 0.75vw, 12px);
+  line-height: 1.4;
+  letter-spacing: clamp(0.6px, 0.12vw, 1.5px);
   text-transform: uppercase;
-  font-family: ui-monospace, monospace;
   font-weight: 500;
+  text-align: center;
+
+  overflow-wrap: anywhere;
 }
 
 .section-header h2 {
-  margin-top: 24px;
-  margin-bottom: 18px;
-  font-size: clamp(2.5rem, 5vw, 4rem);
+  margin: clamp(18px, 2vw, 24px) 0 clamp(12px, 1.5vw, 18px);
+  width: 100%;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 5vw, 4rem);
   font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -2px;
-  font-family: serif;
+  line-height: 1.08;
+  letter-spacing: clamp(-2.5px, -0.18vw, -1px);
+
+  text-wrap: balance;
+  overflow-wrap: break-word;
+
   background: linear-gradient(180deg, #ffffff 0%, #9a9a9a 100%);
   -webkit-background-clip: text;
   background-clip: text;
-  color: #ffffff;
+  color: transparent;
 }
 
 .section-header p {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+
   color: #8b8b8b;
-  font-size: 1.1rem;
-  line-height: 1.8;
-  font-family: "Inter", sans-serif;
+
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-size: clamp(0.86rem, 1.25vw, 1.1rem);
+  line-height: 1.7;
+
+  text-wrap: balance;
+  overflow-wrap: break-word;
 }
 
-/* ===========================================
-   TIMELINE — orbital connector + orbit-ring nodes
-=========================================== */
+/* =========================================================
+   TIMELINE
+========================================================= */
 
 .timeline {
+  position: relative;
+
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 28px;
-  max-width: 1400px;
-  margin: auto;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 28px);
+
+  width: 100%;
+  max-width: 1450px;
+  margin: 0 auto;
 }
 
-/* Dashed orbital path instead of a plain line */
 .timeline-line {
   position: absolute;
   top: 33px;
   left: calc(12.5% - 20px);
   right: calc(12.5% - 20px);
   height: 0;
-  border-top: 1px dashed rgba(255, 255, 255, 0.2);
-  z-index: -1;
+  pointer-events: none;
 }
 
+/* =========================================================
+   TIMELINE CARD
+========================================================= */
 .timeline-step {
-  position: relative;
-  padding: 28px 20px;
-  text-align: left;
-  border-radius: 20px;
+  padding: 24px 20px;
   background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   transition:
-    transform 0.35s ease,
-    border-color 0.35s ease,
-    background 0.35s ease;
-  overflow: hidden;
+    border-color 0.3s ease,
+    background 0.3s ease;
 }
 
 .timeline-step::before {
   content: "";
+
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    circle at top left,
-    rgba(255, 255, 255, 0.07),
-    transparent 65%
-  );
-  opacity: 0;
-  transition: opacity 0.4s ease;
+
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.1), transparent 38%),
+    radial-gradient(
+      circle at 100% 100%,
+      rgba(255, 255, 255, 0.04),
+      transparent 42%
+    );
+
+  opacity: 0.65;
+
   pointer-events: none;
+  z-index: -1;
+
+  transition: opacity 0.4s ease;
+}
+
+.timeline-step::after {
+  content: "";
+
+  position: absolute;
+  inset: 1px;
+
+  border: 1px solid rgba(255, 255, 255, 0.035);
+
+  border-radius: calc(clamp(16px, 1.5vw, 22px) - 1px);
+
+  pointer-events: none;
+
+  z-index: 0;
+}
+.timeline-step > * {
+  position: relative;
+  z-index: 2;
 }
 
 .timeline-step:hover {
-  transform: translateY(-6px);
-  border-color: rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.035);
+  transform: translate3d(0, -7px, 0);
+
+  border-color: rgba(255, 255, 255, 0.22);
+
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.075),
+    rgba(255, 255, 255, 0.025) 50%,
+    rgba(255, 255, 255, 0.012)
+  );
+
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.55),
+    0 8px 28px rgba(0, 0, 0, 0.3),
+    0 0 35px rgba(255, 255, 255, 0.035),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .timeline-step:hover::before {
   opacity: 1;
 }
 
-/* Node wrapper — holds the spinning orbit ring + the solid number circle */
+/* =========================================================
+   NODE / RING
+========================================================= */
+
 .timeline-node-wrap {
   position: relative;
-  width: 66px;
-  height: 66px;
-  margin-bottom: 25px;
+  width: clamp(54px, 4.5vw, 66px);
+  height: clamp(54px, 4.5vw, 66px);
+  margin-bottom: clamp(16px, 2vw, 25px);
+  flex-shrink: 0;
 }
 
-/* Spinning dashed ring, like a tiny orbit around each step number */
 .timeline-ring {
   position: absolute;
   inset: 0;
@@ -225,17 +339,13 @@
   animation: spinRing 10s linear infinite;
 }
 
-/* NOTE: nth-child counts .timeline-line as child 1, so the step cards
-   are children 2-5. These selectors give each ring a distinct spin. */
 .timeline-step:nth-child(3) .timeline-ring {
   animation-direction: reverse;
   animation-duration: 14s;
 }
-
 .timeline-step:nth-child(4) .timeline-ring {
   animation-duration: 8s;
 }
-
 .timeline-step:nth-child(5) .timeline-ring {
   animation-direction: reverse;
   animation-duration: 12s;
@@ -250,15 +360,16 @@
   }
 }
 
-/* A tiny satellite dot riding the ring's edge */
 .timeline-ring::before {
   content: "";
   position: absolute;
   top: -2px;
   left: 50%;
-  width: 5px;
-  height: 5px;
-  margin-left: -2.5px;
+
+  width: clamp(4px, 0.35vw, 5px);
+  height: clamp(4px, 0.35vw, 5px);
+  margin-left: clamp(-2.5px, -0.18vw, -2px);
+
   border-radius: 50%;
   background: #ffffff;
   box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.8);
@@ -266,68 +377,563 @@
 
 .timeline-node {
   position: absolute;
-  top: 6px;
-  left: 6px;
-  width: 54px;
-  height: 54px;
+  top: clamp(5px, 0.4vw, 6px);
+  left: clamp(5px, 0.4vw, 6px);
+
+  width: calc(100% - 12px);
+  height: calc(100% - 12px);
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   border-radius: 50%;
+
   background: #ffffff;
-  color: #000;
-  font-size: 1rem;
+  color: #000000;
+
+  font-size: clamp(0.8rem, 1vw, 1rem);
   font-weight: 700;
+
   box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
-  transition: box-shadow 0.35s ease;
+
+  transition:
+    box-shadow 0.35s ease,
+    transform 0.35s ease;
 }
 
 .timeline-step:hover .timeline-node {
   box-shadow: 0 8px 30px rgba(255, 255, 255, 0.3);
+  transform: scale(1.04);
 }
 
 .timeline-step:hover .timeline-ring {
   border-color: rgba(255, 255, 255, 0.6);
 }
 
+/* =========================================================
+   CARD TEXT
+========================================================= */
+
 .timeline-step h3 {
-  font-size: 1.5rem;
-  margin-bottom: 12px;
+  margin: 0 0 clamp(8px, 1vw, 12px);
+
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: clamp(1rem, 1.5vw, 1.5rem);
   font-weight: 600;
-  color: white;
-  font-family: "Inter", sans-serif;
+  line-height: 1.3;
+  color: #ffffff;
+
+  overflow-wrap: break-word;
 }
 
 .timeline-step p {
+  margin: 0;
+
   color: #8d8d8d;
-  line-height: 1.75;
-  font-size: 0.98rem;
-  font-family: "Inter", sans-serif;
+
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: clamp(0.8rem, 1vw, 0.98rem);
+  line-height: 1.7;
+
+  overflow-wrap: break-word;
 }
 
-/* Responsive */
-@media (max-width: 1100px) {
+/* =========================================================
+   LARGE DESKTOP  (1440px+)
+========================================================= */
+
+@media (min-width: 1440px) {
+  .how-it-works {
+    padding-left: clamp(80px, 7vw, 140px);
+    padding-right: clamp(80px, 7vw, 140px);
+  }
   .timeline {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
+    max-width: 1500px;
+  }
+  .timeline-step {
+    padding: 30px 24px;
+  }
+}
+
+/* =========================================================
+   ULTRAWIDE  (1920px+)
+========================================================= */
+
+@media (min-width: 1920px) {
+  .how-it-works {
+    padding-top: 120px;
+    padding-bottom: 120px;
+  }
+  .section-header {
+    max-width: 900px;
+    margin-bottom: 80px;
+  }
+  .section-header h2 {
+    font-size: clamp(4rem, 4vw, 5rem);
+  }
+  .section-header p {
+    font-size: 1.15rem;
+  }
+  .timeline {
+    max-width: 1600px;
+    gap: 30px;
+  }
+  .timeline-step {
+    padding: 34px 28px;
+  }
+}
+
+/* =========================================================
+   SMALL LAPTOP  (≤1199px)
+========================================================= */
+
+@media (max-width: 1199px) {
+  .how-it-works {
+    padding-left: clamp(28px, 5vw, 70px);
+    padding-right: clamp(28px, 5vw, 70px);
+  }
+  .timeline {
+    gap: 20px;
+  }
+  .timeline-step {
+    padding: 24px 18px;
+  }
+}
+
+/* =========================================================
+   TABLET  (≤1024px)
+========================================================= */
+
+@media (max-width: 1024px) {
+  .how-it-works {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+  .section-header {
+    max-width: 700px;
+    margin-bottom: 50px;
+  }
+  .section-header h2 {
+    font-size: clamp(2.2rem, 5.5vw, 3.2rem);
+  }
+
+  .timeline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
   }
   .timeline-line {
     display: none;
   }
+  .timeline-step {
+    padding: 26px 22px;
+  }
+  .timeline-step h3 {
+    font-size: 1.3rem;
+  }
+  .timeline-step p {
+    font-size: 0.92rem;
+  }
 }
 
-@media (max-width: 700px) {
+/* =========================================================
+   TABLET PORTRAIT  (≤768px)
+========================================================= */
+
+@media (max-width: 768px) {
   .how-it-works {
-    padding: 90px 24px;
-  }
-  .timeline {
-    grid-template-columns: 1fr;
-    gap: 20px;
+    padding: 65px 24px;
   }
   .section-header {
-    margin-bottom: 50px;
+    max-width: 650px;
+    margin-bottom: 42px;
+  }
+  .section-tag {
+    font-size: clamp(8px, 1.4vw, 11px);
   }
   .section-header h2 {
-    font-size: 2.4rem;
+    font-size: clamp(2rem, 7vw, 2.8rem);
+    letter-spacing: -1.5px;
+  }
+  .section-header p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .timeline {
+    grid-template-columns: 1fr;
+    width: 100%;
+    max-width: 620px;
+    gap: 18px;
+  }
+  .timeline-step {
+    padding: 24px 20px;
+    border-radius: 18px;
+  }
+  .timeline-step h3 {
+    font-size: 1.2rem;
+  }
+  .timeline-step p {
+    font-size: 0.9rem;
+  }
+}
+
+/* =========================================================
+   MOBILE  (≤600px)
+========================================================= */
+
+@media (max-width: 600px) {
+  .how-it-works {
+    min-height: auto;
+    padding: 60px 18px;
+  }
+  .section-header {
+    margin-bottom: 38px;
+  }
+  .section-tag {
+    padding: 30px 30px;
+    font-size: 10px !important;
+    letter-spacing: 20px;
+    width: 40%;
+  }
+  .section-header h2 {
+    margin: 16px 0 12px;
+    font-size: clamp(1.8rem, 8vw, 2.2rem);
+    line-height: 1.12;
+    letter-spacing: -0.8px;
+  }
+  .section-header p {
+    font-size: clamp(0.82rem, 3.5vw, 0.92rem);
+    line-height: 1.65;
+  }
+
+  .timeline {
+    gap: 15px;
+  }
+  .timeline-step {
+    padding: 21px 17px;
+    border-radius: 16px;
+  }
+  .timeline-node-wrap {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 17px;
+  }
+  .timeline-node {
+    width: 44px;
+    height: 44px;
+    font-size: 0.85rem;
+  }
+  .timeline-step h3 {
+    font-size: 1.08rem;
+    margin-bottom: 8px;
+  }
+  .timeline-step p {
+    font-size: 0.84rem;
+    line-height: 1.65;
+  }
+}
+
+/* =========================================================
+   SMALL PHONES  (≤480px)
+========================================================= */
+
+@media (max-width: 480px) {
+  .how-it-works {
+    padding: 52px 14px;
+  }
+  .section-header {
+    margin-bottom: 32px;
+  }
+
+  .section-header h2 {
+    font-size: clamp(2.25rem, 10vw, 3.2rem);
+
+    line-height: 1.02;
+
+    letter-spacing: -1.2px;
+  }
+
+  .section-tag {
+    padding: 6px 9px;
+    font-size: 7px;
+    letter-spacing: 0.6px;
+  }
+  .section-header h2 {
+    font-size: clamp(50px, 8.5vw, 2rem);
+    line-height: 1.15;
+  }
+  .section-header p {
+    font-size: clamp(0.78rem, 3.4vw, 0.88rem);
+  }
+
+  .timeline {
+    gap: 13px;
+  }
+  .timeline-step {
+    padding: 19px 15px;
+    border-radius: 15px;
+  }
+  .timeline-node-wrap {
+    width: 54px;
+    height: 54px;
+    margin-bottom: 15px;
+  }
+  .timeline-node {
+    width: 42px;
+    height: 42px;
+    font-size: 0.8rem;
+  }
+  .timeline-step h3 {
+    font-size: 1rem;
+  }
+  .timeline-step p {
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+}
+
+/* =========================================================
+   VERY SMALL PHONES  (≤360px)
+========================================================= */
+
+@media (max-width: 360px) {
+  .how-it-works {
+    padding: 46px 11px;
+  }
+  .section-header {
+    margin-bottom: 28px;
+  }
+  .section-tag {
+    font-size: 6.5px;
+    padding: 5px 8px;
+  }
+  .section-header h2 {
+    font-size: 1.55rem;
+    letter-spacing: -0.6px;
+  }
+  .section-header p {
+    font-size: 0.78rem;
+    line-height: 1.6;
+  }
+
+  .timeline {
+    gap: 11px;
+  }
+  .timeline-step {
+    padding: 17px 13px;
+    border-radius: 14px;
+  }
+  .timeline-node-wrap {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 14px;
+  }
+  .timeline-node {
+    width: 38px;
+    height: 38px;
+    font-size: 0.75rem;
+  }
+  .timeline-step h3 {
+    font-size: 0.95rem;
+    margin-bottom: 7px;
+  }
+  .timeline-step p {
+    font-size: 0.76rem;
+    line-height: 1.55;
+  }
+}
+
+/* =========================================================
+   ULTRA SMALL  (≤320px)
+========================================================= */
+
+@media (max-width: 320px) {
+  .how-it-works {
+    padding: 40px 9px;
+  }
+  .section-header h2 {
+    font-size: 1.4rem;
+  }
+  .section-header p {
+    font-size: 0.74rem;
+  }
+  .timeline-step {
+    padding: 15px 12px;
+  }
+  .timeline-step h3 {
+    font-size: 0.9rem;
+  }
+  .timeline-step p {
+    font-size: 0.72rem;
+  }
+}
+
+/* =========================================================
+   SHORT VIEWPORTS
+========================================================= */
+
+@media (max-height: 700px) and (min-width: 769px) {
+  .how-it-works {
+    min-height: auto;
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+  .section-header {
+    margin-bottom: 42px;
+  }
+}
+
+@media (max-height: 650px) and (max-width: 768px) {
+  .how-it-works {
+    min-height: auto;
+    padding-top: 45px;
+    padding-bottom: 45px;
+  }
+  .section-header {
+    margin-bottom: 28px;
+  }
+  .timeline {
+    gap: 12px;
+  }
+}
+
+/* =========================================================
+   LANDSCAPE PHONES
+========================================================= */
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .how-it-works {
+    min-height: auto;
+    padding: 35px 30px;
+  }
+  .section-header {
+    max-width: 700px;
+    margin-bottom: 30px;
+  }
+  .section-header h2 {
+    font-size: 2rem;
+    margin: 12px 0;
+  }
+  .section-header p {
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  .timeline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 850px;
+    gap: 14px;
+  }
+  .timeline-step {
+    padding: 18px 16px;
+  }
+  .timeline-node-wrap {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+  }
+  .timeline-node {
+    width: 36px;
+    height: 36px;
+    font-size: 0.75rem;
+  }
+  .timeline-step h3 {
+    font-size: 0.95rem;
+  }
+  .timeline-step p {
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+}
+
+/* =========================================================
+   TOUCH DEVICES
+========================================================= */
+
+@media (hover: none), (pointer: coarse) {
+  .timeline-step:hover {
+    transform: none;
+    border-color: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .timeline-step:hover::before {
+    opacity: 0;
+  }
+  .timeline-step:hover .timeline-node {
+    transform: none;
+    box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+  }
+  .timeline-step:hover .timeline-ring {
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .how-it-works::before {
+    animation: none !important;
+  }
+  .timeline-ring {
+    animation: none !important;
+  }
+  .timeline-step,
+  .timeline-node {
+    transition: none !important;
+  }
+}
+/* =========================================================
+   STRONGER GLOW SPREAD FOR DESKTOP / LAPTOP
+   (fixes cards losing "transparent glass" look on wide screens)
+========================================================= */
+
+@media (min-width: 1025px) {
+  .how-it-works::before {
+    background: rgb #000000ed (0 0 0 / 93%);
+  }
+
+  /* Reinforce the glass look explicitly at desktop sizes */
+  .timeline-step {
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+  }
+
+  .timeline-step:hover {
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.09),
+      rgba(255, 255, 255, 0.03) 50%,
+      rgba(255, 255, 255, 0.015)
+    );
+  }
+}
+
+@media (min-width: 1920px) {
+  .how-it-works::before {
+    background:
+      linear-gradient(
+        to left,
+        rgba(5, 5, 5, 1) 0%,
+        rgba(5, 5, 5, 0.72) 18%,
+        transparent 45%
+      ),
+      radial-gradient(
+        ellipse 1800px 1100px at 50% 45%,
+        rgba(255, 255, 255, 0.12),
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 1400px 900px at 15% 85%,
+        rgba(255, 255, 255, 0.07),
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 1400px 900px at 85% 15%,
+        rgba(255, 255, 255, 0.07),
+        transparent 70%
+      );
   }
 }

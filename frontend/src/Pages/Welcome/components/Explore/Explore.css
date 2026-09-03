@@ -1,0 +1,1402 @@
+/* =========================================================
+   DEVORBIT — EXPLORE
+   OBSIDIAN ORBIT
+   MATCHES HOW IT WORKS
+   FULL RESPONSIVE — 320px → 4K+
+========================================================= */
+
+/* =========================================================
+   GLOBAL BOX SIZING
+========================================================= */
+
+.explore,
+.explore *,
+.explore *::before,
+.explore *::after {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.explore {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+
+  min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
+
+  padding: clamp(60px, 8vh, 110px) clamp(16px, 6vw, 100px);
+
+  overflow: hidden;
+  isolation: isolate;
+
+  background: #000000 !important;
+  color: #f6f6f4;
+}
+/* =========================================================
+   BACKGROUND GLOW
+========================================================= */
+
+.explore-background-glow {
+  position: absolute;
+  inset: -20%;
+
+  z-index: -3;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse clamp(350px, 55vw, 1000px) clamp(250px, 50vh, 700px) at 50% 45%,
+      rgba(255, 255, 255, 0.08),
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse clamp(300px, 45vw, 800px) clamp(220px, 40vh, 600px) at 20% 80%,
+      rgba(255, 255, 255, 0.035),
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse clamp(300px, 45vw, 800px) clamp(220px, 40vh, 600px) at 80% 20%,
+      rgba(255, 255, 255, 0.035),
+      transparent 65%
+    );
+
+  filter: blur(clamp(40px, 6vw, 90px));
+
+  animation: exploreGlow 20s ease-in-out infinite alternate;
+
+  will-change: transform;
+}
+
+@keyframes exploreGlow {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(20px, -15px, 0) scale(1.05);
+  }
+
+  100% {
+    transform: translate3d(-15px, 15px, 0) scale(1);
+  }
+}
+
+/* =========================================================
+   ORBITS
+========================================================= */
+
+.explore .orbit {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+
+  box-shadow:
+    0 0 25px rgba(255, 255, 255, 0.04),
+    inset 0 0 20px rgba(255, 255, 255, 0.02);
+
+  pointer-events: none;
+}
+
+.explore .orbit-1 {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.explore .orbit-2 {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.explore .orbit-3 {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.explore-header {
+  position: relative;
+  z-index: 10;
+
+  width: 100%;
+  max-width: clamp(600px, 60vw, 800px);
+
+  margin: 0 auto clamp(36px, 5vw, 70px);
+
+  text-align: center;
+}
+
+/* =========================================================
+   TAG
+========================================================= */
+
+.explore-tag {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: fit-content;
+  max-width: 100%;
+
+  padding: clamp(6px, 0.8vw, 8px) clamp(11px, 1.4vw, 18px);
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.04);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  color: #cfcfcf;
+
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  font-size: clamp(8px, 0.75vw, 12px);
+
+  line-height: 1.4;
+
+  letter-spacing: clamp(0.6px, 0.12vw, 1.5px);
+
+  text-transform: uppercase;
+  font-weight: 500;
+
+  text-align: center;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   HEADER TITLE
+========================================================= */
+
+.explore-header h2 {
+  width: 100%;
+
+  margin: clamp(18px, 2vw, 24px) 0 clamp(12px, 1.5vw, 18px);
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: clamp(2rem, 5vw, 4rem);
+
+  font-weight: 800;
+
+  line-height: 1.08;
+
+  letter-spacing: clamp(-2.5px, -0.18vw, -1px);
+
+  text-wrap: balance;
+
+  overflow-wrap: break-word;
+
+  background: linear-gradient(180deg, #ffffff 0%, #9a9a9a 100%);
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  color: transparent;
+}
+
+/* =========================================================
+   HEADER DESCRIPTION
+========================================================= */
+
+.explore-header p {
+  width: 100%;
+  max-width: 720px;
+
+  margin: 0 auto;
+
+  color: #8b8b8b;
+
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-size: clamp(0.86rem, 1.25vw, 1.1rem);
+
+  line-height: 1.7;
+
+  text-wrap: balance;
+
+  overflow-wrap: break-word;
+}
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.explore-grid {
+  position: relative;
+  z-index: 10;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: clamp(14px, 2vw, 28px);
+
+  width: 100%;
+  max-width: 1450px;
+
+  margin: 0 auto;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
+/* =========================================================
+   EXPLORE CARD
+   SAME CARD SYSTEM AS HOW IT WORKS
+========================================================= */
+
+.explore-card {
+  position: relative;
+
+  width: 100%;
+  min-width: 0;
+  padding: 24px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+
+  box-shadow: none;
+
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+
+  overflow: hidden;
+  isolation: isolate;
+
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    background 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* =========================================================
+   CARD INNER GLOW
+========================================================= */
+
+.explore-card::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.1), transparent 38%),
+    radial-gradient(
+      circle at 100% 100%,
+      rgba(255, 255, 255, 0.04),
+      transparent 42%
+    );
+
+  opacity: 0.65;
+
+  pointer-events: none;
+  z-index: -1;
+
+  transition: opacity 0.4s ease;
+}
+
+.explore-card::after {
+  content: "";
+
+  position: absolute;
+  inset: 1px;
+
+  border: 1px solid rgba(255, 255, 255, 0.035);
+
+  border-radius: 17px;
+
+  pointer-events: none;
+  z-index: 0;
+}
+
+.explore-card > * {
+  position: relative;
+  z-index: 2;
+}
+/* =========================================================
+   DESKTOP HOVER
+========================================================= */
+
+@media (hover: hover) and (pointer: fine) {
+  .explore-card:hover {
+    transform: translate3d(0, -7px, 0);
+
+    border-color: rgba(255, 255, 255, 0.22);
+
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.075),
+      rgba(255, 255, 255, 0.025) 50%,
+      rgba(255, 255, 255, 0.012)
+    );
+
+    box-shadow:
+      0 28px 70px rgba(0, 0, 0, 0.55),
+      0 8px 28px rgba(0, 0, 0, 0.3),
+      0 0 35px rgba(255, 255, 255, 0.035),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+  }
+
+  .explore-card:hover::before {
+    opacity: 1;
+  }
+}
+
+/* =========================================================
+   NODE WRAPPER
+========================================================= */
+
+.explore-node-wrap {
+  position: relative;
+
+  width: clamp(54px, 4.5vw, 66px);
+  height: clamp(54px, 4.5vw, 66px);
+
+  margin-bottom: clamp(16px, 2vw, 25px);
+
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   RING
+========================================================= */
+
+.explore-ring {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  border-radius: 50%;
+
+  border: 1px dashed rgba(255, 255, 255, 0.35);
+
+  animation: exploreSpinRing 10s linear infinite;
+}
+
+@keyframes exploreSpinRing {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   RING SPEEDS
+========================================================= */
+
+.explore-card:nth-child(2) .explore-ring {
+  animation-direction: reverse;
+  animation-duration: 14s;
+}
+
+.explore-card:nth-child(3) .explore-ring {
+  animation-duration: 8s;
+}
+
+.explore-card:nth-child(4) .explore-ring {
+  animation-direction: reverse;
+  animation-duration: 12s;
+}
+
+.explore-card:nth-child(5) .explore-ring {
+  animation-duration: 16s;
+}
+
+.explore-card:nth-child(6) .explore-ring {
+  animation-direction: reverse;
+  animation-duration: 9s;
+}
+
+/* =========================================================
+   RING SATELLITE
+========================================================= */
+
+.explore-ring::before {
+  content: "";
+
+  position: absolute;
+
+  top: -2px;
+  left: 50%;
+
+  width: clamp(4px, 0.35vw, 5px);
+  height: clamp(4px, 0.35vw, 5px);
+
+  margin-left: clamp(-2.5px, -0.18vw, -2px);
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* =========================================================
+   CENTER NODE
+========================================================= */
+
+.explore-node {
+  position: absolute;
+
+  top: clamp(5px, 0.4vw, 6px);
+  left: clamp(5px, 0.4vw, 6px);
+
+  width: calc(100% - 12px);
+  height: calc(100% - 12px);
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+  color: #000000;
+
+  font-size: clamp(0.8rem, 1vw, 1rem);
+
+  font-weight: 700;
+  line-height: 1;
+
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+
+  transition:
+    box-shadow 0.35s ease,
+    transform 0.35s ease;
+}
+
+/* =========================================================
+   NODE HOVER
+========================================================= */
+
+@media (hover: hover) and (pointer: fine) {
+  .explore-card:hover .explore-node {
+    transform: scale(1.04);
+
+    box-shadow: 0 8px 30px rgba(255, 255, 255, 0.3);
+  }
+
+  .explore-card:hover .explore-ring {
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+/* =========================================================
+   CARD TITLE
+========================================================= */
+
+.explore-card h3 {
+  margin: 0 0 clamp(8px, 1vw, 12px);
+
+  color: #ffffff;
+
+  font-family: "Inter", system-ui, sans-serif;
+
+  font-size: clamp(1rem, 1.5vw, 1.5rem);
+
+  font-weight: 600;
+
+  line-height: 1.3;
+
+  overflow-wrap: break-word;
+}
+
+/* =========================================================
+   CARD DESCRIPTION
+========================================================= */
+
+.explore-card p {
+  margin: 0;
+
+  color: #8d8d8d;
+
+  font-family: "Inter", system-ui, sans-serif;
+
+  font-size: clamp(0.8rem, 1vw, 0.98rem);
+
+  line-height: 1.7;
+
+  overflow-wrap: break-word;
+}
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.explore-buttons {
+  position: relative;
+
+  z-index: 10;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+
+  margin: clamp(42px, 5vw, 70px) auto 0;
+}
+
+.timeline-step {
+  position: relative;
+
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  padding: clamp(20px, 2vw, 34px) clamp(16px, 1.8vw, 28px);
+
+  overflow: hidden;
+
+  background: rgba(255, 255, 255, 0.025);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: clamp(14px, 1.3vw, 22px);
+
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+
+  transition:
+    transform 0.35s ease,
+    border-color 0.35s ease,
+    background 0.35s ease,
+    box-shadow 0.35s ease;
+
+  isolation: isolate;
+}
+
+.timeline-step::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  z-index: -1;
+  pointer-events: none;
+
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.1), transparent 38%),
+    radial-gradient(
+      circle at 100% 100%,
+      rgba(255, 255, 255, 0.04),
+      transparent 42%
+    );
+
+  opacity: 0.65;
+
+  transition: opacity 0.4s ease;
+}
+
+.timeline-step::after {
+  content: "";
+
+  position: absolute;
+  inset: 1px;
+
+  z-index: 0;
+  pointer-events: none;
+
+  border: 1px solid rgba(255, 255, 255, 0.035);
+
+  border-radius: calc(clamp(14px, 1.3vw, 22px) - 1px);
+}
+
+/* Keep card content above effects */
+
+.timeline-step > * {
+  position: relative;
+  z-index: 2;
+}
+
+.enter-button {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: min(100%, 240px);
+
+  min-width: clamp(160px, 18vw, 190px);
+
+  min-height: clamp(44px, 4vw, 52px);
+
+  padding: 12px clamp(22px, 3vw, 30px);
+
+  border: none;
+
+  border-radius: clamp(10px, 1vw, 12px);
+
+  background: #ffffff;
+
+  color: #050505;
+
+  font-size: clamp(13px, 1vw, 15px);
+
+  font-weight: 600;
+
+  line-height: 1.2;
+
+  white-space: nowrap;
+
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.18);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.35s ease,
+    background 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+/* =========================================================
+   BUTTON HOVER
+========================================================= */
+
+@media (hover: hover) and (pointer: fine) {
+  .enter-button:hover {
+    transform: translate3d(0, -3px, 0);
+
+    background: #f3f4f6;
+
+    box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* =========================================================
+   1440px+
+========================================================= */
+
+@media (min-width: 1440px) {
+  .explore {
+    padding-left: clamp(80px, 7vw, 140px);
+
+    padding-right: clamp(80px, 7vw, 140px);
+  }
+
+  .explore-grid {
+    max-width: 1500px;
+    gap: 30px;
+  }
+
+  .explore-card {
+    padding: 30px 24px;
+  }
+}
+
+/* =========================================================
+   1920px+
+========================================================= */
+
+@media (min-width: 1920px) {
+  .explore {
+    padding-top: 120px;
+    padding-bottom: 120px;
+  }
+
+  .explore-header {
+    max-width: 900px;
+    margin-bottom: 80px;
+  }
+
+  .explore-header h2 {
+    font-size: clamp(4rem, 4vw, 5rem);
+  }
+
+  .explore-header p {
+    font-size: 1.15rem;
+  }
+
+  .explore-grid {
+    max-width: 1600px;
+    gap: 34px;
+  }
+
+  .explore-card {
+    padding: 34px 28px;
+  }
+}
+
+/* =========================================================
+   ≤1199px
+========================================================= */
+
+@media (max-width: 1199px) {
+  .explore {
+    padding-left: clamp(28px, 5vw, 70px);
+
+    padding-right: clamp(28px, 5vw, 70px);
+  }
+
+  .explore-grid {
+    gap: 20px;
+  }
+
+  .explore-card {
+    padding: 24px 18px;
+  }
+}
+
+/* =========================================================
+   ≤1024px
+========================================================= */
+
+@media (max-width: 1024px) {
+  .explore {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+
+  .explore-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 22px;
+  }
+
+  .explore-card {
+    background: rgba(255, 255, 255, 0.02);
+    box-shadow: none;
+
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .explore-card h3 {
+    font-size: 1.3rem;
+  }
+
+  .explore-card p {
+    font-size: 0.92rem;
+  }
+}
+
+/* =========================================================
+   TABLET — ≤768px
+========================================================= */
+
+@media (max-width: 768px) {
+  .explore {
+    min-height: auto;
+
+    padding: 65px 24px;
+  }
+
+  .explore-header {
+    max-width: 650px;
+
+    margin-bottom: 42px;
+  }
+
+  .explore-tag {
+    padding: 6px 11px;
+
+    font-size: clamp(8px, 1.4vw, 11px);
+
+    letter-spacing: 0.8px;
+  }
+
+  .explore-header h2 {
+    font-size: clamp(2rem, 7vw, 2.8rem);
+
+    letter-spacing: -1.5px;
+  }
+
+  .explore-header p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .explore-grid {
+    grid-template-columns: 1fr;
+
+    width: 100%;
+
+    max-width: 620px;
+
+    gap: 18px;
+  }
+
+  /* SAME AS HOW IT WORKS */
+  .explore-card {
+    padding: 24px 20px;
+
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.02);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+
+    box-shadow: none;
+
+    transform: none;
+  }
+
+  .explore-card h3 {
+    font-size: 1.2rem;
+  }
+
+  .explore-card p {
+    font-size: 0.9rem;
+  }
+}
+
+/* =========================================================
+   MOBILE — ≤600px
+========================================================= */
+
+@media (max-width: 600px) {
+  .explore {
+    min-height: auto;
+
+    padding: 60px 18px;
+  }
+
+  .explore-header {
+    margin-bottom: 38px;
+  }
+
+  .explore-tag {
+    padding: 6px 10px;
+
+    font-size: 10px;
+
+    letter-spacing: 0.7px;
+
+    width: fit-content;
+  }
+
+  .explore-header h2 {
+    margin: 16px 0 12px;
+
+    font-size: clamp(1.8rem, 8vw, 2.2rem);
+
+    line-height: 1.12;
+
+    letter-spacing: -0.8px;
+  }
+
+  .explore-header p {
+    font-size: clamp(0.82rem, 3.5vw, 0.92rem);
+
+    line-height: 1.65;
+  }
+
+  .explore-grid {
+    gap: 15px;
+  }
+
+  /* CLEAN MOBILE GLASS */
+  .explore-card {
+    padding: 21px 17px;
+
+    border-radius: 16px;
+
+    background: rgba(255, 255, 255, 0.02);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    box-shadow: none;
+
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .explore-node-wrap {
+    width: 56px;
+    height: 56px;
+
+    margin-bottom: 17px;
+  }
+
+  .explore-node {
+    width: 44px;
+    height: 44px;
+
+    font-size: 0.85rem;
+  }
+
+  .explore-card h3 {
+    font-size: 1.08rem;
+
+    margin-bottom: 8px;
+  }
+
+  .explore-card p {
+    font-size: 0.84rem;
+
+    line-height: 1.65;
+  }
+
+  .explore-buttons {
+    margin-top: 38px;
+  }
+}
+
+/* =========================================================
+   SMALL PHONES — ≤480px
+========================================================= */
+
+@media (max-width: 480px) {
+  .explore {
+    padding: 52px 14px;
+  }
+
+  .explore-header {
+    margin-bottom: 32px;
+  }
+
+  .explore-tag {
+    padding: 6px 9px;
+    font-size: 12px;
+    letter-spacing: 0.6px;
+  }
+
+  .explore-header h2 {
+    margin: 16px 0 12px;
+
+    font-size: clamp(1.8rem, 9vw, 2.25rem);
+
+    line-height: 1.08;
+
+    letter-spacing: -1px;
+  }
+
+  .explore-header p {
+    font-size: clamp(0.78rem, 3.4vw, 0.88rem);
+
+    line-height: 1.6;
+  }
+
+  .explore-grid {
+    gap: 13px;
+  }
+
+  .explore-card {
+    padding: 19px 15px;
+
+    border-radius: 15px;
+
+    background: rgba(255, 255, 255, 0.02);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    box-shadow: none;
+
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .explore-node-wrap {
+    width: 54px;
+    height: 54px;
+
+    margin-bottom: 15px;
+  }
+
+  .explore-node {
+    width: 42px;
+    height: 42px;
+
+    font-size: 0.8rem;
+  }
+
+  .explore-card h3 {
+    font-size: 1rem;
+
+    margin-bottom: 8px;
+  }
+
+  .explore-card p {
+    font-size: 0.8rem;
+
+    line-height: 1.6;
+  }
+
+  .explore-buttons {
+    margin-top: 34px;
+  }
+
+  .enter-button {
+    width: 100%;
+
+    max-width: 220px;
+
+    min-height: 44px;
+
+    font-size: 13px;
+  }
+}
+
+/* =========================================================
+   VERY SMALL PHONES — ≤360px
+========================================================= */
+
+@media (max-width: 360px) {
+  .explore {
+    padding: 46px 11px;
+  }
+
+  .explore-header {
+    margin-bottom: 28px;
+  }
+
+  .explore-tag {
+    font-size: 12px;
+    padding: 5px 25px;
+    letter-spacing: 0.5px;
+  }
+
+  .explore-header h2 {
+    font-size: 1.55rem;
+
+    letter-spacing: -0.6px;
+  }
+
+  .explore-header p {
+    font-size: 0.78rem;
+
+    line-height: 1.6;
+  }
+
+  .explore-grid {
+    gap: 11px;
+  }
+
+  .explore-card {
+    padding: 17px 13px;
+
+    border-radius: 14px;
+  }
+
+  .explore-node-wrap {
+    width: 50px;
+    height: 50px;
+
+    margin-bottom: 14px;
+  }
+
+  .explore-node {
+    width: 38px;
+    height: 38px;
+
+    font-size: 0.75rem;
+  }
+
+  .explore-card h3 {
+    font-size: 0.95rem;
+
+    margin-bottom: 7px;
+  }
+
+  .explore-card p {
+    font-size: 0.76rem;
+
+    line-height: 1.55;
+  }
+}
+
+/* =========================================================
+   ULTRA SMALL — ≤320px
+========================================================= */
+
+@media (max-width: 320px) {
+  .explore {
+    padding: 40px 9px;
+  }
+
+  .explore-tag {
+    font-size: 12px;
+    padding: 5px 23px;
+  }
+
+  .explore-header h2 {
+    font-size: 1.4rem;
+  }
+
+  .explore-header p {
+    font-size: 0.74rem;
+  }
+
+  .explore-card {
+    padding: 15px 12px;
+
+    border-radius: 13px;
+  }
+
+  .explore-card h3 {
+    font-size: 0.9rem;
+  }
+
+  .explore-card p {
+    font-size: 0.72rem;
+  }
+
+  .explore-node-wrap {
+    width: 46px;
+    height: 46px;
+  }
+
+  .explore-node {
+    width: 34px;
+    height: 34px;
+
+    font-size: 0.7rem;
+  }
+
+  .enter-button {
+    max-width: 200px;
+
+    min-height: 42px;
+
+    font-size: 12px;
+  }
+}
+
+/* =========================================================
+   LANDSCAPE PHONES
+========================================================= */
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .explore {
+    min-height: auto;
+
+    padding: 35px 30px;
+  }
+
+  .explore-header {
+    max-width: 700px;
+
+    margin-bottom: 30px;
+  }
+
+  .explore-header h2 {
+    font-size: 2rem;
+
+    margin: 12px 0;
+  }
+
+  .explore-header p {
+    font-size: 0.82rem;
+
+    line-height: 1.5;
+  }
+
+  .explore-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    max-width: 850px;
+
+    gap: 14px;
+  }
+
+  .explore-card {
+    padding: 18px 16px;
+  }
+
+  .explore-node-wrap {
+    width: 48px;
+    height: 48px;
+
+    margin-bottom: 12px;
+  }
+
+  .explore-node {
+    width: 36px;
+    height: 36px;
+
+    font-size: 0.75rem;
+  }
+
+  .explore-card h3 {
+    font-size: 0.95rem;
+  }
+
+  .explore-card p {
+    font-size: 0.75rem;
+
+    line-height: 1.5;
+  }
+
+  .explore-buttons {
+    margin-top: 30px;
+  }
+}
+
+/* =========================================================
+   TOUCH DEVICES
+========================================================= */
+
+@media (hover: none), (pointer: coarse) {
+  .explore-card {
+    transform: none !important;
+
+    background: rgba(255, 255, 255, 0.02) !important;
+
+    border-color: rgba(255, 255, 255, 0.08) !important;
+
+    box-shadow: none !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .explore-card:hover {
+    transform: none !important;
+
+    background: rgba(255, 255, 255, 0.02) !important;
+
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .explore-card:hover .explore-node {
+    transform: none;
+
+    box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+  }
+
+  .explore-card:hover .explore-ring {
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .enter-button:hover {
+    transform: none;
+
+    background: #ffffff;
+
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.18);
+  }
+
+  .cursor-dot,
+  .cursor-ring {
+    display: none !important;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .explore-background-glow {
+    animation: none !important;
+  }
+
+  .explore-ring {
+    animation: none !important;
+  }
+
+  .explore-card,
+  .explore-node,
+  .enter-button {
+    transition: none !important;
+  }
+}
+
+/* =========================================================
+   DESKTOP BACKGROUND
+========================================================= */
+
+@media (min-width: 1025px) {
+  .explore-background-glow {
+    background:
+      radial-gradient(
+        ellipse 1000px 700px at 50% 45%,
+        rgba(255, 255, 255, 0.07),
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 800px 600px at 15% 85%,
+        rgba(255, 255, 255, 0.035),
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 800px 600px at 85% 15%,
+        rgba(255, 255, 255, 0.035),
+        transparent 70%
+      );
+  }
+
+  .explore-card {
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+  }
+
+  .explore-card:hover {
+    transform: translate3d(0, -7px, 0);
+
+    border-color: rgba(255, 255, 255, 0.22);
+
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.09),
+      rgba(255, 255, 255, 0.03) 50%,
+      rgba(255, 255, 255, 0.015)
+    );
+
+    box-shadow:
+      0 28px 70px rgba(0, 0, 0, 0.55),
+      0 8px 28px rgba(0, 0, 0, 0.3),
+      0 0 35px rgba(255, 255, 255, 0.035),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+  }
+
+  .explore-card:hover::before {
+    opacity: 1;
+  }
+}
+
+/* =========================================================
+   4K BACKGROUND
+========================================================= */
+
+@media (min-width: 1920px) {
+  .explore-background-glow {
+    background:
+      radial-gradient(
+        ellipse 1800px 1100px at 50% 45%,
+        rgba(255, 255, 255, 0.1),
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 1400px 900px at 15% 85%,
+        rgba(255, 255, 255, 0.055),
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 1400px 900px at 85% 15%,
+        rgba(255, 255, 255, 0.055),
+        transparent 70%
+      );
+  }
+}
