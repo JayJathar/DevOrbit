@@ -6,17 +6,9 @@ import { ArrowForward, Home } from "@mui/icons-material";
 import BackgroundAnimation from "../Welcome/components/BackgroundAnimation/BackgroundAnimation";
 import devlogo from "../../assets/devlogo.svg";
 
-// ==========================================
-// 404 — PAGE NOT FOUND
-// Same visual system as Login: dark glass card,
-// orbit mark, glow fields — extended with a
-// floating astronaut lost outside the orbit.
-// ==========================================
-
 export default function NotFound() {
   const navigate = useNavigate();
   const [darkMode] = useState(true);
-
   return (
     <div className={darkMode ? "login-page dark notfound-page" : "login-page light notfound-page"}>
       <BackgroundAnimation />
@@ -46,16 +38,13 @@ export default function NotFound() {
 
       <Box className="notfound-container">
         <img src={devlogo} alt="DevOrbit" className="left-logo notfound-logo" />
-
-        {/* Big Orbit + Astronaut Scene */}
+        
         <div className="astronaut-orbit" aria-hidden="true">
           <div className="astronaut-orbit-ring astronaut-orbit-ring--outer" />
           <div className="astronaut-orbit-ring astronaut-orbit-ring--mid" />
           <div className="astronaut-orbit-ring astronaut-orbit-ring--inner" />
-
           <div className="orbit-satellite orbit-satellite--a" />
           <div className="orbit-satellite orbit-satellite--b" />
-
           <div className="astronaut-float">
             <svg
               viewBox="0 0 200 220"

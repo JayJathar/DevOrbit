@@ -24,8 +24,6 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import BackgroundAnimation from "../Welcome/components/BackgroundAnimation/BackgroundAnimation";
 import devlogo from "../../assets/devlogo.svg";
 
-// ---------------- Validation Rules ----------------
-
 const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
 
 function validateField(name, value, formData) {
@@ -63,14 +61,8 @@ function validateAll(formData) {
 export default function ResetPassword() {
   const navigate = useNavigate();
   const { token } = useParams();
-
-  // ---------------- Theme ----------------
-
   const [darkMode, setDarkMode] = useState(true);
   const toggleTheme = () => setDarkMode(!darkMode);
-
-  // ---------------- Form ----------------
-
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: "",
@@ -78,14 +70,8 @@ export default function ResetPassword() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const fieldRefs = useRef({});
-
-  // ---------------- Password Visibility ----------------
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  // ---------------- Loading ----------------
-
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({
     open: false,
@@ -93,20 +79,15 @@ export default function ResetPassword() {
     severity: "success",
   });
 
-  // ---------------- Input Change ----------------
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     const nextFormData = { ...formData, [name]: value };
     setFormData(nextFormData);
-
     setErrors((prev) => {
       const next = { ...prev };
-
       if (touched[name]) {
         next[name] = validateField(name, value, nextFormData);
       }
-
       if (name === "password" && touched.confirmPassword) {
         next.confirmPassword = validateField(
           "confirmPassword",
@@ -114,7 +95,6 @@ export default function ResetPassword() {
           nextFormData,
         );
       }
-
       return next;
     });
   };
@@ -135,16 +115,11 @@ export default function ResetPassword() {
   const handleCloseToast = () => {
     setToast((prev) => ({ ...prev, open: false }));
   };
-
-  // ---------------- Reset Password ----------------
-
   const handleResetPassword = async (e) => {
     e.preventDefault();
-
     const newErrors = validateAll(formData);
     setErrors(newErrors);
     setTouched({ password: true, confirmPassword: true });
-
     const errorFields = Object.keys(newErrors);
 
     if (errorFields.length > 0) {
@@ -173,11 +148,9 @@ export default function ResetPassword() {
 
       if (response.ok) {
         showToast(data.message, "success");
-
         setFormData({ password: "", confirmPassword: "" });
         setErrors({});
         setTouched({});
-
         setTimeout(() => {
           navigate("/login");
         }, 1500);
@@ -245,7 +218,6 @@ export default function ResetPassword() {
           <div className="reset-card-accent" />
 
           <Typography className="reset-card-title">Reset Password</Typography>
-
           <Typography className="reset-card-subtitle">
             Enter a new password below to reset your account access.
           </Typography>
@@ -254,7 +226,6 @@ export default function ResetPassword() {
 
           <FormControl fullWidth margin="normal" error={!!errors.password}>
             <InputLabel>New Password</InputLabel>
-
             <OutlinedInput
               label="New Password"
               type={showPassword ? "text" : "password"}

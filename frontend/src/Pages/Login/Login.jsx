@@ -25,24 +25,19 @@ import {
 import BackgroundAnimation from "../Welcome/components/BackgroundAnimation/BackgroundAnimation";
 import devlogo from "../../assets/devlogo.svg";
 
-// ---------------- Validation Rules ----------------
-
 const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
 function validateField(name, value) {
   const trimmed = typeof value === "string" ? value.trim() : value;
-
   switch (name) {
     case "email":
       if (!trimmed) return "Email is required";
       if (!EMAIL_REGEX.test(trimmed)) return "Enter a valid email";
       return "";
-
     case "password":
       if (!value) return "Password is required";
       if (value.length < 8) return "Password must be at least 8 characters";
       return "";
-
     default:
       return "";
   }
@@ -51,20 +46,15 @@ function validateField(name, value) {
 function validateAll(formData) {
   const fields = ["email", "password"];
   const errors = {};
-
   fields.forEach((field) => {
     const error = validateField(field, formData[field]);
     if (error) errors[field] = error;
   });
-
   return errors;
 }
 
 export default function Login() {
   const navigate = useNavigate();
-
-  // ---------------- Form ----------------
-
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -72,23 +62,14 @@ export default function Login() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const fieldRefs = useRef({});
-
   const [rememberMe, setRememberMe] = useState(false);
-
-  // ---------------- Password Visibility ----------------
-
   const [showPassword, setShowPassword] = useState(false);
-
-  // ---------------- Loading ----------------
-
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({
     open: false,
     message: "",
     severity: "success",
   });
-
-  // ---------------- Input Change ----------------
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -120,24 +101,17 @@ export default function Login() {
   const handleCloseToast = () => {
     setToast((prev) => ({ ...prev, open: false }));
   };
-
-  // ---------------- Login ----------------
-
   const handleLogin = async (e) => {
     e.preventDefault();
-
     const newErrors = validateAll(formData);
     setErrors(newErrors);
     setTouched({ email: true, password: true });
-
     const errorFields = Object.keys(newErrors);
-
     if (errorFields.length > 0) {
       showToast("Please fix all errors", "error");
       fieldRefs.current[errorFields[0]]?.focus();
       return;
     }
-
     setLoading(true);
 
     try {
@@ -153,25 +127,16 @@ export default function Login() {
       });
 
       const data = await response.json();
-
       if (response.ok) {
         showToast(data.message, "success");
-
-        // Save token
         localStorage.setItem("token", data.token);
-
-        // Save user
         localStorage.setItem("user", JSON.stringify(data.user));
-
-        // Clear form
         setFormData({
           email: "",
           password: "",
         });
-
         setErrors({});
         setTouched({});
-
         setTimeout(() => {
           navigate("/Home");
         }, 1500);
@@ -185,9 +150,6 @@ export default function Login() {
       setLoading(false);
     }
   };
-
-  // ---------------- Google ----------------
-
   const handleGoogle = () => {
     alert("Google Sign In");
   };
@@ -195,8 +157,6 @@ export default function Login() {
   return (
     <div className="login-page dark">
       <BackgroundAnimation />
-
-      {/* Signature orbit mark */}
       <div className="orbit-mark" aria-hidden="true">
         <div className="orbit-core"></div>
         <div className="orbit-ring orbit-ring--outer" />
@@ -206,20 +166,16 @@ export default function Login() {
         <div className="orbit-tick orbit-tick--bottom" />
         <div className="orbit-tick orbit-tick--left" />
       </div>
-
-      {/* Theme Toggle */}
-
       <Box className="login-container">
+        
         {/* Left Side */}
 
         <Box className="login-left">
           <img src={devlogo} alt="DevOrbit" className="left-logo" />
-
           <div className="left-eyebrow">
             <span className="eyebrow-dot" />
             The New Standard for Creators
           </div>
-
           <Typography className="left-title">
             Welcome <span className="title-accent">Back.</span>
           </Typography>
@@ -238,9 +194,7 @@ export default function Login() {
           noValidate
         >
           <div className="login-card-accent" />
-
           <Typography className="card-title">Welcome Back</Typography>
-
           <Typography className="card-subtitle">
             Sign in to your account and continue building, sharing, and growing
             with a community that ships.

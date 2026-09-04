@@ -1,10 +1,7 @@
 const bcrypt = require("bcrypt");
-
 const nodemailer = require("nodemailer");
-
 // Import User Model
 const User = require("../models/User");
-
 // Import Jwt token
 const jwt = require("jsonwebtoken");
 // Register User Controller
@@ -29,7 +26,6 @@ const registerUser = async (req, res) => {
   try {
     // Get data from Postman/React
     const { fullname, username, email, password } = req.body;
-
     // Check required fields
     if (!fullname || !username || !email || !password) {
       return res.status(400).json({
@@ -37,7 +33,6 @@ const registerUser = async (req, res) => {
         message: "All fields are required",
       });
     }
-
     // Full Name Validation
     if (fullname.trim().length < 3) {
       return res.status(400).json({
@@ -45,7 +40,6 @@ const registerUser = async (req, res) => {
         message: "Full name must be at least 3 characters",
       });
     }
-
     // Username Validation
     if (username.length < 3 || username.length > 20) {
       return res.status(400).json({
@@ -53,9 +47,7 @@ const registerUser = async (req, res) => {
         message: "Username must be between 3 and 20 characters",
       });
     }
-
     const usernameRegex = /^[a-zA-Z0-9_.-]+$/;
-
     if (!usernameRegex.test(username)) {
       return res.status(400).json({
         success: false,
@@ -63,10 +55,8 @@ const registerUser = async (req, res) => {
           "Username can only contain letters, numbers, underscore (_), hyphen (-), and dot (.)",
       });
     }
-
     // Email Validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         success: false,
@@ -84,7 +74,6 @@ const registerUser = async (req, res) => {
 
     // Check if email already exists
     const existingEmail = await User.findOne({ email });
-
     if (existingEmail) {
       return res.status(400).json({
         success: false,
@@ -94,17 +83,14 @@ const registerUser = async (req, res) => {
 
     // Check if username already exists
     const existingUsername = await User.findOne({ username });
-
     if (existingUsername) {
       return res.status(400).json({
         success: false,
         message: "Username already exists",
       });
     }
-
     // Hash Password
     const hashedPassword = await bcrypt.hash(password, 10);
-
     // Create User
     const user = await User.create({
       fullname,
@@ -137,15 +123,12 @@ const registerUser = async (req, res) => {
   }
 };
 // Login User Controller
-
 const loginUser = async (req, res) => {
   try {
     // Get email and password
     const { email, password } = req.body;
-
     // Find user by email
     const user = await User.findOne({ email });
-
     // Check if user exists
     if (!user) {
       return res.status(404).json({
@@ -156,7 +139,6 @@ const loginUser = async (req, res) => {
 
     // Compare entered password with stored hashed password
     const isMatch = await bcrypt.compare(password, user.password);
-
     // Check password
     if (!isMatch) {
       return res.status(400).json({
@@ -206,10 +188,8 @@ const getProfile = async (req, res) => {
   try {
     // Get logged-in user's ID from JWT
     const userId = req.user.id;
-
     // Find the actual user in MongoDB
     const user = await User.findById(userId).select("-password");
-
     // Check if user exists
     if (!user) {
       return res.status(404).json({
@@ -219,7 +199,6 @@ const getProfile = async (req, res) => {
     }
 
     console.log("USER FROM MONGODB:", user);
-
     res.status(200).json({
       success: true,
       message: "Profile Fetched Successfully",
@@ -241,7 +220,6 @@ const forgotPassword = async (req, res) => {
   try {
     console.log("Body:", req.body);
     console.log("Headers:", req.headers);
-
     // Check if body exists
     if (!req.body) {
       return res.status(400).json({
@@ -262,7 +240,6 @@ const forgotPassword = async (req, res) => {
 
     // Check if user exists
     const user = await User.findOne({ email });
-
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -274,9 +251,7 @@ const forgotPassword = async (req, res) => {
     const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "15m",
     });
-
     const resetLink = `http://localhost:5173/reset-password/${resetToken}`;
-
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
@@ -295,7 +270,6 @@ const forgotPassword = async (req, res) => {
     <p>If you did not request this, ignore this email.</p>
   `,
     });
-
     return res.status(200).json({
       success: true,
       message: "Reset link sent successfully",
@@ -316,15 +290,11 @@ const resetPassword = async (req, res) => {
   try {
     const { token } = req.params;
     const { password } = req.body;
-
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
     const hashedPassword = await bcrypt.hash(password, 10);
-
     await User.findByIdAndUpdate(decoded.id, {
       password: hashedPassword,
     });
-
     res.status(200).json({
       success: true,
       message: "Password reset successfully",

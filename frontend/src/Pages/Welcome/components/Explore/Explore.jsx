@@ -44,25 +44,17 @@ const exploreItems = [
 const Explore = () => {
   return (
     <section className="explore">
-      {/* Same background system as How It Works */}
       <BackgroundAnimation subtle />
-
-      {/* Background glow */}
       <div className="explore-background-glow" />
-
-      {/* Header */}
       <div className="explore-header">
         <span className="explore-tag">Explore DevOrbit</span>
-
         <h2>Discover Something New</h2>
-
         <p>
           Explore projects, code, designs, creators, and ideas from a growing
           community of developers and innovators.
         </p>
       </div>
 
-      {/* Cards */}
       {/* Cards */}
       <div className="explore-grid">
         {exploreItems.map((item) => (
@@ -71,9 +63,7 @@ const Explore = () => {
               <span className="explore-ring" />
               <div className="explore-node">{item.icon}</div>
             </div>
-
             <h3>{item.title}</h3>
-
             <p>{item.description}</p>
           </article>
         ))}

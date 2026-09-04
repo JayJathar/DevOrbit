@@ -1,13 +1,4 @@
-/* ==========================================
-   GOOGLE FONT
-========================================== */
-
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
-
-/* ==========================================
-   EXPLORE PAGE SHELL
-========================================== */
-
 .explore-page {
   position: relative;
   min-height: 100vh;
@@ -23,7 +14,6 @@
   background: #000;
   color: #fff;
 }
-
 .explore-page.light {
   background: #fafafa;
   color: #111;
@@ -51,8 +41,8 @@
   background: rgba(255, 255, 255, 0.05);
   right: -100px;
   top: 300px;
-}
 
+}
 .explore-page .glow-3 {
   width: 600px;
   height: 600px;
@@ -61,10 +51,6 @@
   left: 35%;
 }
 
-/* ==========================================
-   TOP NAV (shared pattern with Home)
-========================================== */
-
 .explore-page .topnav {
   position: fixed;
   top: 0;
@@ -72,13 +58,10 @@
   right: 0;
   height: 72px;
   z-index: 50;
-
   display: flex;
   align-items: center;
   gap: 32px;
-
   padding: 0 40px;
-
   background: rgba(10, 10, 10, 0.6);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -109,14 +92,11 @@
 .explore-page .topnav-search {
   flex: 1;
   max-width: 420px;
-
   display: flex;
   align-items: center;
   gap: 10px;
-
   padding: 10px 16px;
   border-radius: 14px;
-
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #fff;
@@ -170,10 +150,6 @@
   border: 2px solid rgba(255, 255, 255, 0.4);
 }
 
-/* ==========================================
-   LAYOUT
-========================================== */
-
 .explore-layout {
   position: relative;
   z-index: 10;
@@ -198,10 +174,6 @@
   margin-top: 4px !important;
   font-size: 15px !important;
 }
-
-/* ==========================================
-   TABS
-========================================== */
 
 .explore-tabs {
   display: flex;
@@ -231,10 +203,6 @@
   border: 1px solid transparent !important;
 }
 
-/* ==========================================
-   TAG RAIL
-========================================== */
-
 .tag-rail {
   display: flex;
   gap: 10px;
@@ -259,10 +227,6 @@
   background: rgba(0, 0, 0, 0.03) !important;
   border: 1px solid rgba(0, 0, 0, 0.06) !important;
 }
-
-/* ==========================================
-   MASONRY TILE GRID
-========================================== */
 
 .tile-grid {
   columns: 4 220px;
@@ -306,7 +270,6 @@
   align-items: center;
   justify-content: center;
   gap: 22px;
-
   opacity: 0;
   transition: 0.3s ease;
   background: rgba(0, 0, 0, 0.15);
@@ -339,10 +302,6 @@
   justify-content: center;
   backdrop-filter: blur(6px);
 }
-
-/* ==========================================
-   PEOPLE GRID (People tab)
-========================================== */
 
 .people-grid {
   display: grid;
@@ -392,10 +351,6 @@
   border-radius: 999px !important;
   width: 100%;
 }
-
-/* ==========================================
-   FOOTER
-========================================== */
 
 .explore-end {
   display: flex;

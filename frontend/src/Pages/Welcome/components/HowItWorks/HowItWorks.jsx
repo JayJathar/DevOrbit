@@ -46,7 +46,6 @@ const HowItWorks = () => {
 
       <div className="timeline">
         <div className="timeline-line"></div>
-
         {steps.map((step) => (
           <div className="timeline-step" key={step.number}>
             <div className="timeline-node-wrap">

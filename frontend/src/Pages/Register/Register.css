@@ -1,7 +1,3 @@
-/* ===========================================
-   REGISTER PAGE — matches Welcome/DevOrbit theme
-=========================================== */
-
 .register {
   position: relative;
   overflow: hidden;
@@ -14,7 +10,6 @@
   background: #0a0a0a;
 }
 
-/* Soft center glow, same treatment as .welcome::after */
 .register::after {
   content: "";
   position: absolute;
@@ -32,7 +27,7 @@
   pointer-events: none;
 }
 
-/* Reuse the orbit/dot background animation from Welcome.css */
+
 .register .background-animation {
   position: absolute;
   inset: -150px;
@@ -141,10 +136,6 @@
   }
 }
 
-/* ===========================================
-   CARD
-=========================================== */
-
 .register-card {
   position: relative;
   z-index: 10;
@@ -175,7 +166,6 @@
   animation: smoothFloat 3s ease-in-out infinite;
 }
 
-/* Terms Checkbox */
 .terms-options {
   display: flex;
   align-items: center;
@@ -270,10 +260,6 @@
   font-family: "Inter", sans-serif;
 }
 
-/* ===========================================
-   FORM
-=========================================== */
-
 .register-form {
   width: 100%;
   display: flex;
@@ -281,7 +267,6 @@
   gap: 12px;
 }
 
-/* MUI TextField dark theme overrides */
 .register-field .MuiOutlinedInput-root {
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.03);
@@ -333,7 +318,6 @@
   color: #ffffff !important;
 }
 
-/* Primary submit button — mirrors .join-btn */
 .register-submit-btn {
   margin-top: 2px !important;
   padding: 11px 30px !important;
@@ -343,7 +327,6 @@
   letter-spacing: 0.5px !important;
   text-transform: none !important;
   transition: all 0.35s ease !important;
-
   background: #ffffff !important;
   color: #050505 !important;
   border: none !important;
@@ -387,20 +370,16 @@
     font-size: 12px !important;
     line-height: 1.5 !important;
   }
- 
   .terms-options .inline-link {
     font-size: 12px !important;
   }
-
-  
-  
 }
 
 @media (max-width: 600px) {
   .register {
     padding: 40px 16px;
   }
-
+  
   .register-card {
     padding: 24px 20px 20px;
     border-radius: 16px;

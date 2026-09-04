@@ -27,28 +27,24 @@ import {
 import BackgroundAnimation from "../Welcome/components/BackgroundAnimation/BackgroundAnimation";
 import devlogo from "../../assets/devlogo.svg";
 
-// ---------------- Validation Rules ----------------
+
 
 const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 const NAME_REGEX = /^[a-zA-Z\s'-]{2,}$/;
-
 function getPasswordStrength(value) {
   if (!value) return { score: 0, label: "" };
-
   let score = 0;
   if (value.length >= 8) score++;
   if (value.length >= 12) score++;
   if (/[A-Z]/.test(value) && /[a-z]/.test(value)) score++;
   if (/\d/.test(value)) score++;
   if (/[^A-Za-z0-9]/.test(value)) score++;
-
   const labels = ["Very weak", "Weak", "Fair", "Good", "Strong", "Excellent"];
   return { score, label: labels[score] };
 }
 
 function validateField(name, value, formData = {}) {
   const trimmed = typeof value === "string" ? value.trim() : value;
-
   switch (name) {
     case "fullname":
       if (!trimmed) {
@@ -66,9 +62,7 @@ function validateField(name, value, formData = {}) {
       if (!/^[A-Za-z\s'-]+$/.test(trimmed)) {
         return "Only letters, spaces, apostrophes and hyphens are allowed.";
       }
-
       return "";
-
     case "username":
       if (!trimmed) {
         return "Username is required.";
@@ -100,7 +94,6 @@ function validateField(name, value, formData = {}) {
       if (!EMAIL_REGEX.test(trimmed)) {
         return "Please enter a valid email address (e.g. john@example.com).";
       }
-
       return "";
 
     case "password":
@@ -174,13 +167,7 @@ function validateAll(formData) {
 
 export default function Register() {
   const navigate = useNavigate();
-
-  // ---------------- Theme ----------------
-
   const [darkMode] = useState(true);
-
-  // ---------------- Form ----------------
-
   const [formData, setFormData] = useState({
     fullname: "",
     username: "",
@@ -199,10 +186,8 @@ export default function Register() {
     agree: false,
   });
   const fieldRefs = useRef({});
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({
     open: false,
@@ -211,9 +196,6 @@ export default function Register() {
   });
 
   const strength = getPasswordStrength(formData.password);
-
-  // ---------------- Handlers ----------------
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     const nextFormData = { ...formData, [name]: value };
@@ -224,7 +206,6 @@ export default function Register() {
       if (touched[name]) {
         next[name] = validateField(name, value, nextFormData);
       }
-      // Re-check confirm password whenever password changes
       if (name === "password" && touched.confirmPassword) {
         next.confirmPassword = validateField(
           "confirmPassword",
@@ -266,11 +247,8 @@ export default function Register() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
     const newErrors = validateAll(formData);
-
     setErrors(newErrors);
-
     setTouched({
       fullname: true,
       username: true,
@@ -281,16 +259,12 @@ export default function Register() {
     });
 
     const errorFields = Object.keys(newErrors);
-
     if (errorFields.length > 0) {
       showToast("Please fix all errors", "error");
-
       const firstField = errorFields[0];
       fieldRefs.current[firstField]?.focus();
-
       return;
     }
-
     setLoading(true);
 
     try {
@@ -306,14 +280,10 @@ export default function Register() {
           password: formData.password,
         }),
       });
-
       const data = await response.json();
-
       console.log(data);
-
       if (response.ok) {
         showToast(data.message || "Account created successfully!", "success");
-
         setFormData({
           fullname: "",
           username: "",
@@ -348,12 +318,11 @@ export default function Register() {
     } finally {
       setLoading(false);
     }
-  }; // <-- IMPORTANT: handleRegister ends here
+  }; 
 
   return (
     <div className={darkMode ? "login-page dark" : "login-page light"}>
       <BackgroundAnimation />
-
       {/* Ambient mesh-gradient orbs */}
       <div className="bg-orbs" aria-hidden="true">
         <span className="bg-orb bg-orb--1" />
@@ -361,7 +330,6 @@ export default function Register() {
         <span className="bg-orb bg-orb--3" />
       </div>
       <div className="bg-noise" aria-hidden="true" />
-
       <div className="orbit-mark" aria-hidden="true">
         <div className="orbit-core">
           <span></span>
@@ -373,16 +341,9 @@ export default function Register() {
         <div className="orbit-tick orbit-tick--bottom" />
         <div className="orbit-tick orbit-tick--left" />
       </div>
-      {/* 
-        <div className="theme-toggle">
-          <IconButton onClick={toggleTheme}>
-            {darkMode ? <LightMode /> : <DarkMode />}
-          </IconButton>
-        </div> */}
-
+  
       <Box className="login-container">
         {/* Left Side */}
-
         <Box className="login-left">
           <img src={devlogo} alt="DevOrbit" className="left-logo" />
 
@@ -410,9 +371,7 @@ export default function Register() {
           noValidate
         >
           <div className="login-card-accent" />
-
           <Typography className="card-title">Create Account</Typography>
-
           <Typography className="card-subtitle">
             Let's get you set up. It only takes a minute.
           </Typography>
@@ -604,18 +563,6 @@ export default function Register() {
             <span className="or-text">OR</span>
             <span className="or-line" />
           </div>
-
-          {/* Google */}
-
-          {/* <Button
-            fullWidth
-            variant="outlined"
-            startIcon={<Google />}
-            className="google-btn"
-            onClick={handleGoogle}
-          >
-            Continue with Google
-          </Button> */}
 
           {/* Sign In */}
 

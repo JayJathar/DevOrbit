@@ -1,6 +1,5 @@
 import "./Home.css";
 import { useEffect, useState } from "react";
-
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
 import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineRounded";
@@ -11,11 +10,6 @@ import ArrowOutwardRoundedIcon from "@mui/icons-material/ArrowOutwardRounded";
 import CodeRoundedIcon from "@mui/icons-material/CodeRounded";
 import PeopleOutlineRoundedIcon from "@mui/icons-material/PeopleOutlineRounded";
 import BookmarkBorderRoundedIcon from "@mui/icons-material/BookmarkBorderRounded";
-
-/* =========================================================
-   LIVE BUILDERS
-========================================================= */
-
 const LIVE_BUILDERS = [
   {
     id: 1,
@@ -60,11 +54,6 @@ const LIVE_BUILDERS = [
     live: true,
   },
 ];
-
-/* =========================================================
-   CODE
-========================================================= */
-
 const reactSnippet = [
   [
     { t: "kw", v: "const" },
@@ -89,11 +78,6 @@ const reactSnippet = [
   ],
   [{ t: "pl", v: "});" }],
 ];
-
-/* =========================================================
-   FEED
-========================================================= */
-
 const FEED = [
   {
     id: "f1",
@@ -108,7 +92,6 @@ const FEED = [
     likes: 128,
     comments: 14,
   },
-
   {
     id: "f2",
     type: "code",
@@ -122,7 +105,6 @@ const FEED = [
     stars: 342,
     comments: 21,
   },
-
   {
     id: "f3",
     type: "text",
@@ -136,7 +118,6 @@ const FEED = [
     likes: 76,
     comments: 9,
   },
-
   {
     id: "f4",
     type: "project",
@@ -150,7 +131,6 @@ const FEED = [
     likes: 203,
     comments: 27,
   },
-
   {
     id: "f5",
     type: "text",
@@ -165,11 +145,6 @@ const FEED = [
     comments: 32,
   },
 ];
-
-/* =========================================================
-   INITIAL COMMENTS
-========================================================= */
-
 const INITIAL_COMMENTS = {
   f1: [
     {
@@ -189,7 +164,6 @@ const INITIAL_COMMENTS = {
       mine: false,
     },
   ],
-
   f2: [
     {
       id: "c3",
@@ -200,7 +174,6 @@ const INITIAL_COMMENTS = {
       mine: false,
     },
   ],
-
   f3: [
     {
       id: "c4",
@@ -211,9 +184,6 @@ const INITIAL_COMMENTS = {
       mine: false,
     },
   ],
-
-  f4: [],
-
   f5: [
     {
       id: "c5",
@@ -225,11 +195,6 @@ const INITIAL_COMMENTS = {
     },
   ],
 };
-
-/* =========================================================
-   TRENDING
-========================================================= */
-
 const TRENDING = [
   {
     name: "React.js",
@@ -252,11 +217,6 @@ const TRENDING = [
     trend: "+8%",
   },
 ];
-
-/* =========================================================
-   SUGGESTED
-========================================================= */
-
 const SUGGESTED = [
   {
     id: "u1",
@@ -279,35 +239,19 @@ const SUGGESTED = [
     initial: "M",
     role: "ML Researcher",
   },
-];
-
-/* =========================================================
-   COMPONENT
-========================================================= */
-
+]
 export default function Home() {
-  /* =========================================================
-     USER STATE
-  ========================================================= */
-
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
-
-  /* =========================================================
-     FETCH LOGGED-IN USER FROM MONGODB
-  ========================================================= */
-
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
         const token = localStorage.getItem("token");
-
         if (!token) {
           console.log("❌ No JWT token found");
           setUser(null);
           return;
         }
-
         const response = await fetch(
           "http://localhost:5000/api/users/profile",
           {
@@ -318,162 +262,78 @@ export default function Home() {
             },
           },
         );
-
         const data = await response.json();
-
-        console.log("🔥 HOME USER RESPONSE:", data);
-
+        console.log(" HOME USER RESPONSE:", data);
         if (response.ok && data.success) {
           setUser(data.user);
-
-          console.log("✅ HOME MONGODB USER:", data.user);
+          console.log("HOME MONGODB USER:", data.user);
         } else {
-          console.error("❌ Failed to fetch Home user:", data.message);
-
+          console.error("Failed to fetch Home user:", data.message);
           setUser(null);
         }
       } catch (error) {
-        console.error("❌ Home user fetch error:", error);
+        console.error("Home user fetch error:", error);
         setUser(null);
       } finally {
         setLoadingUser(false);
       }
     };
-
     fetchCurrentUser();
   }, []);
-
-  /* =========================================================
-     SAFE USER DATA
-  ========================================================= */
-
   const displayName =
     user?.fullname ||
     user?.fullName ||
     user?.name ||
     user?.displayName ||
     "User";
-
   const firstName = displayName;
-
   const userInitial =
     user?.fullname?.charAt(0)?.toUpperCase() ||
     user?.fullName?.charAt(0)?.toUpperCase() ||
     user?.name?.charAt(0)?.toUpperCase() ||
     "U";
-
-  /* =========================================================
-     LIKE STATE
-  ========================================================= */
-
   const [liked, setLiked] = useState(new Set());
-
-  /* =========================================================
-     SAVE STATE
-  ========================================================= */
-
   const [saved, setSaved] = useState(new Set());
-
-  /* =========================================================
-     FOLLOW STATE
-  ========================================================= */
-
   const [following, setFollowing] = useState(new Set());
-
-  /* =========================================================
-     COMMENT OPEN STATE
-  ========================================================= */
-
   const [openComments, setOpenComments] = useState(new Set());
-
-  /* =========================================================
-     COMMENTS STATE
-  ========================================================= */
-
   const [comments, setComments] = useState(INITIAL_COMMENTS);
-
-  /* =========================================================
-     COMMENT INPUT STATE
-  ========================================================= */
-
   const [commentText, setCommentText] = useState({});
-
-  /* =========================================================
-     GENERIC SET TOGGLE
-  ========================================================= */
-
   const toggleSet = (setter) => (id) => {
     setter((previous) => {
       const next = new Set(previous);
-
       if (next.has(id)) {
         next.delete(id);
       } else {
         next.add(id);
       }
-
       return next;
     });
   };
-
-  /* =========================================================
-     LIKE
-  ========================================================= */
-
   const toggleLike = toggleSet(setLiked);
-
-  /* =========================================================
-     SAVE
-  ========================================================= */
-
   const toggleSave = toggleSet(setSaved);
-
-  /* =========================================================
-     FOLLOW
-  ========================================================= */
-
   const toggleFollow = toggleSet(setFollowing);
-
-  /* =========================================================
-     TOGGLE COMMENTS
-  ========================================================= */
-
   const toggleComments = (postId) => {
     setOpenComments((previous) => {
       const next = new Set(previous);
-
       if (next.has(postId)) {
         next.delete(postId);
       } else {
         next.add(postId);
       }
-
       return next;
     });
   };
-
-  /* =========================================================
-     UPDATE COMMENT INPUT
-  ========================================================= */
-
   const handleCommentChange = (postId, value) => {
     setCommentText((previous) => ({
       ...previous,
       [postId]: value,
     }));
   };
-
-  /* =========================================================
-     ADD COMMENT
-  ========================================================= */
-
   const handleAddComment = (postId) => {
     const text = commentText[postId]?.trim();
-
     if (!text) {
       return;
     }
-
     const newComment = {
       id: `comment-${Date.now()}`,
       author: displayName,
@@ -482,39 +342,26 @@ export default function Home() {
       time: "now",
       mine: true,
     };
-
     setComments((previous) => ({
       ...previous,
       [postId]: [...(previous[postId] || []), newComment],
     }));
-
     setCommentText((previous) => ({
       ...previous,
       [postId]: "",
     }));
-
     setOpenComments((previous) => {
       const next = new Set(previous);
       next.add(postId);
       return next;
     });
   };
-
-  /* =========================================================
-     ENTER TO COMMENT
-  ========================================================= */
-
   const handleCommentKeyDown = (event, postId) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       handleAddComment(postId);
     }
   };
-
-  /* =========================================================
-     DELETE COMMENT
-  ========================================================= */
-
   const handleDeleteComment = (postId, commentId) => {
     setComments((previous) => ({
       ...previous,
@@ -538,7 +385,6 @@ export default function Home() {
             <span className="eyebrow-line" />
             DEVORBIT
           </div>
-
           <h1>
             Welcome back, <span>{loadingUser ? "..." : firstName}</span>
           </h1>
@@ -554,7 +400,6 @@ export default function Home() {
           </div>
           <div className="header-mini-stat">
             <span className="online-dot" />
-
             <span>86 building now</span>
           </div>
         </div>
@@ -712,8 +557,6 @@ function FeedCard({
   commentsOpen,
   commentText,
   commentCount,
-  currentUser,
-  currentUserName,
   currentUserInitial,
   onLike,
   onSave,
@@ -739,7 +582,6 @@ function FeedCard({
       </div>
       <div className="post-content">
         <h3>{item.title}</h3>
-
         {item.body && <p>{item.body}</p>}
         {item.type === "project" && (
           <div className="project-preview">
@@ -845,7 +687,6 @@ function FeedCard({
           ) : (
             <BookmarkBorderRoundedIcon fontSize="small" />
           )}
-
           <span>{saved ? "Saved" : "Save"}</span>
         </button>
       </div>

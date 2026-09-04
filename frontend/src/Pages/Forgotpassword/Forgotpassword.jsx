@@ -10,23 +10,18 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-// import { DarkMode, LightMode } from "@mui/icons-material";
 import BackgroundAnimation from "../Welcome/components/BackgroundAnimation/BackgroundAnimation";
 import devlogo from "../../assets/devlogo.svg";
-
-// ---------------- Validation Rules ----------------
 
 const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
 function validateField(name, value) {
   const trimmed = typeof value === "string" ? value.trim() : value;
-
   switch (name) {
     case "email":
       if (!trimmed) return "Email is required";
       if (!EMAIL_REGEX.test(trimmed)) return "Enter a valid email";
       return "";
-
     default:
       return "";
   }
@@ -35,34 +30,21 @@ function validateField(name, value) {
 function validateAll(formData) {
   const fields = ["email"];
   const errors = {};
-
   fields.forEach((field) => {
     const error = validateField(field, formData[field]);
     if (error) errors[field] = error;
   });
-
   return errors;
 }
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
-
-  // ---------------- Theme ----------------
-
-  // const [darkMode, setDarkMode] = useState(true);
-  // const toggleTheme = () => setDarkMode(!darkMode);
-
-  // ---------------- Form ----------------
-
   const [formData, setFormData] = useState({
     email: "",
   });
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const fieldRefs = useRef({});
-
-  // ---------------- Loading ----------------
-
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({
     open: false,
@@ -70,34 +52,26 @@ export default function ForgotPassword() {
     severity: "success",
   });
 
-  // ---------------- Input Change ----------------
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     const nextFormData = {
       ...formData,
       [name]: value,
     };
 
     setFormData(nextFormData);
-
     setErrors((prev) => {
       const next = { ...prev };
-
       if (touched[name]) {
         next[name] = validateField(name, value);
       }
-
       return next;
     });
   };
 
   const handleBlur = (e) => {
     const { name, value } = e.target;
-
     setTouched((prev) => ({ ...prev, [name]: true }));
-
     setErrors((prev) => ({
       ...prev,
       [name]: validateField(name, value),
@@ -119,26 +93,19 @@ export default function ForgotPassword() {
     }));
   };
 
-  // ---------------- Forgot Password Submit ----------------
-
   const handleSendResetLink = async (e) => {
     e.preventDefault();
-
     const newErrors = validateAll(formData);
-
     setErrors(newErrors);
     setTouched({
       email: true,
     });
-
     const errorFields = Object.keys(newErrors);
 
     if (errorFields.length > 0) {
       showToast("Please fix all errors", "error");
-
       const firstField = errorFields[0];
       fieldRefs.current[firstField]?.focus();
-
       return;
     }
 
@@ -159,10 +126,8 @@ export default function ForgotPassword() {
       );
 
       const data = await response.json();
-
       if (response.ok) {
         showToast(data.message, "success");
-
         setFormData({
           email: "",
         });
@@ -183,11 +148,8 @@ export default function ForgotPassword() {
   };
 
   return (
-    // <div className={darkMode ? "reset-page dark" : "reset-page light"}>
     <div className="reset-page dark">
       <BackgroundAnimation />
-
-      {/* Signature orbit mark */}
       <div className="reset-orbit-mark" aria-hidden="true">
         <div className="reset-orbit-core"></div>
         <div className="reset-orbit-ring reset-orbit-ring--outer" />
@@ -198,16 +160,8 @@ export default function ForgotPassword() {
         <div className="reset-orbit-tick reset-orbit-tick--left" />
       </div>
 
-      {/* Theme Toggle */}
-      {/* <div className="reset-theme-toggle">
-        <IconButton onClick={toggleTheme}>
-          {darkMode ? <LightMode /> : <DarkMode />}
-        </IconButton>
-      </div> */}
-
       <Box className="reset-container">
         {/* Left Side */}
-
         <Box className="reset-left">
           <img src={devlogo} alt="DevOrbit" className="reset-logo" />
 

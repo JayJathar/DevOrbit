@@ -1,8 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-
 const app = express();
-
 // ==========================================
 // MIDDLEWARE
 // ==========================================
@@ -14,7 +12,6 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -34,7 +31,6 @@ app.get("/", (req, res) => {
 // ==========================================
 
 const userRoutes = require("./routes/userRoutes");
-
 app.use("/api/users", userRoutes);
 
 // ==========================================
@@ -53,8 +49,7 @@ app.use((req, res) => {
 // ==========================================
 
 app.use((err, req, res, next) => {
-  console.error("❌ Server Error:", err);
-
+  console.error("Server Error:", err);
   res.status(500).json({
     success: false,
     message: "Internal server error",

@@ -1,12 +1,4 @@
-/* ==========================================
-   GOOGLE FONTS
-========================================== */
-
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap");
-
-/* ==========================================
-   RESET
-========================================== */
 
 * {
   margin: 0;
@@ -24,10 +16,6 @@ body {
 body {
   background: #060606;
 }
-
-/* ==========================================
-   TOKENS
-========================================== */
 
 .login-page.dark {
   --bg: #060606;
@@ -57,23 +45,16 @@ body {
   --danger: #d92d2d;
 }
 
-/* ==========================================
-   LOGIN / REGISTER PAGE
-========================================== */
-
 .login-page {
   position: relative;
   min-height: 100vh;
   width: 100%;
   overflow: hidden;
-
   display: flex;
   justify-content: center;
   align-items: center;
-
   background: var(--bg);
   color: var(--fg);
-
   transition:
     background 0.4s ease,
     color 0.4s ease;
@@ -113,10 +94,6 @@ body {
   pointer-events: none;
 }
 
-/* ==========================================
-   PARTICLE NETWORK CANVAS
-========================================== */
-
 .particle-field {
   position: absolute;
   inset: 0;
@@ -125,10 +102,6 @@ body {
   z-index: 1;
   pointer-events: none;
 }
-
-/* ==========================================
-   SIGNATURE ORBIT MARK
-========================================== */
 
 .orbit-mark {
   position: absolute;
@@ -201,10 +174,6 @@ body {
   }
 }
 
-/* ==========================================
-   THEME TOGGLE
-========================================== */
-
 .theme-toggle {
   position: fixed;
   top: 24px;
@@ -223,10 +192,6 @@ body {
 .theme-toggle button {
   color: var(--fg);
 }
-
-/* ==========================================
-   MAIN CONTAINER
-========================================== */
 
 .login-container {
   width: min(1400px, 92%);
@@ -249,12 +214,10 @@ body {
   border-radius: 50%;
   background: #fff;
   z-index: 3;
-
   box-shadow:
     0 0 15px #fff,
     0 0 35px rgba(255, 255, 255, 0.6),
     0 0 70px rgba(255, 255, 255, 0.3);
-
   animation: pulseCore 3s ease-in-out infinite;
 }
 
@@ -276,10 +239,6 @@ body {
   }
 }
 
-/* ==========================================
-   LEFT CONTENT
-========================================== */
-
 .login-left {
   display: flex;
   flex-direction: column;
@@ -293,12 +252,9 @@ body {
   width: 100px;
   height: 100px;
   object-fit: contain;
-
   margin: 0 0 12px 0;
   align-self: flex-start;
-
   filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.6));
-
   animation: logoFloat 4s ease-in-out infinite;
 }
 
@@ -395,22 +351,16 @@ body {
   background: var(--line);
 }
 
-/* ==========================================
-   LOGIN / REGISTER CARD
-========================================== */
-
 .login-card {
   position: relative;
   overflow: hidden;
   border-radius: 22px;
   padding: 46px 44px 40px;
-
   background: var(--card-bg);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
   border: 1px solid var(--line);
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
-
   animation: fadeUp 0.8s ease;
   transition: 0.4s;
 }
@@ -430,10 +380,6 @@ body {
   opacity: 0.6;
 }
 
-/* ==========================================
-   CARD TITLE
-========================================== */
-
 .card-title {
   font-family: "Space Grotesk", sans-serif;
   font-size: 30px !important;
@@ -449,10 +395,6 @@ body {
   line-height: 1.7;
   font-size: 14.5px !important;
 }
-
-/* ==========================================
-   ANIMATIONS
-========================================== */
 
 @keyframes fadeLeft {
   from {
@@ -475,10 +417,6 @@ body {
     transform: translateY(0);
   }
 }
-
-/* ==========================================
-   MATERIAL UI INPUTS
-========================================== */
 
 .login-card .MuiTextField-root {
   margin-bottom: 4px;
@@ -537,10 +475,6 @@ body {
   font-size: 12px;
 }
 
-/* ==========================================
-   PASSWORD STRENGTH METER
-========================================== */
-
 .password-strength {
   display: flex;
   align-items: center;
@@ -588,10 +522,6 @@ body {
   min-width: 68px;
   text-align: right;
 }
-
-/* ==========================================
-   REMEMBER ME / FORGOT PASSWORD / TERMS
-========================================== */
 
 .login-options {
   display: flex;
@@ -650,10 +580,6 @@ body {
   color: var(--fg-dim);
   text-decoration: underline;
 }
-
-/* ==========================================
-   PRIMARY / GOOGLE BUTTONS
-========================================== */
 
 .login-btn {
   margin-top: 10px !important;
@@ -730,10 +656,6 @@ body {
   transform: translateY(0);
 }
 
-/* ==========================================
-   REGISTER / SIGN-IN SWAP TEXT
-========================================== */
-
 .register-text {
   margin-top: 24px !important;
   text-align: center;
@@ -753,10 +675,6 @@ body {
   color: var(--fg-dim);
   text-decoration: underline;
 }
-
-/* ==========================================
-   TOAST / ALERT
-========================================== */
 
 .MuiSnackbar-root {
   z-index: 99999;
@@ -889,17 +807,12 @@ body {
 
   .timeline-step {
     padding: 24px 20px;
-
     background: rgba(255, 255, 255, 0.02);
-
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 18px;
-
     box-shadow: none;
-
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-
     transition:
       border-color 0.3s ease,
       background 0.3s ease;
@@ -911,11 +824,8 @@ body {
 
   .timeline-step:hover {
     transform: none;
-
     background: rgba(255, 255, 255, 0.02);
-
     border-color: rgba(255, 255, 255, 0.08);
-
     box-shadow: none;
   }
 }
@@ -963,14 +873,10 @@ body {
   }
   .login-card {
     padding: 24px 18px;
-
     background: transparent;
-
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 20px;
-
     box-shadow: none;
-
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
@@ -987,15 +893,10 @@ body {
 
   .timeline-step {
     padding: 22px 18px;
-
     background: transparent;
-
     border: 1px solid rgba(255, 255, 255, 0.08);
-
     border-radius: 20px;
-
     box-shadow: none;
-
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
@@ -1018,7 +919,6 @@ body {
   .timeline-node {
     width: 42px;
     height: 42px;
-
     font-size: 0.82rem;
   }
 
@@ -1065,10 +965,6 @@ body {
   }
 }
 
-/* ==========================================
-   ACCESSIBILITY
-========================================== */
-
 @media (prefers-reduced-motion: reduce) {
   .left-logo,
   .orbit-ring--inner,
@@ -1077,10 +973,6 @@ body {
     animation: none !important;
   }
 }
-
-/* ==========================================
-   SCROLLBAR
-========================================== */
 
 ::-webkit-scrollbar {
   width: 8px;

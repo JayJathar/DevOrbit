@@ -1,54 +1,24 @@
-/* =========================================================
-   DEVORBIT — BACKGROUND ANIMATION
-   OBSIDIAN ORBIT
-   Fully Fluid / Responsive for Every Screen
-========================================================= */
-
-/* =========================================================
-   THEME VARIABLES
-========================================================= */
-
 :root {
   --line: rgba(255, 255, 255, 0.08);
   --glow: rgba(255, 255, 255, 0.055);
-
   --dot-color: #ffffff;
   --dot-glow: rgba(255, 255, 255, 0.8);
-
   --cursor-ring: rgba(255, 255, 255, 0.5);
-
-  /* -----------------------------------------------------
-     FLUID SIZE TOKENS
-     clamp(min, preferred-vw, max) lets every value scale
-     continuously with viewport width instead of jumping
-     at fixed breakpoints. Tune the vw multiplier to taste.
-  ----------------------------------------------------- */
-
   --grid-size: clamp(16px, 2vw, 26px);
-
   --orbit-1-size: clamp(140px, 20vw, 460px);
   --orbit-2-size: clamp(230px, 32vw, 700px);
   --orbit-3-size: clamp(330px, 45vw, 980px);
-
   --dot-1-radius: calc(var(--orbit-1-size) / 2);
   --dot-2-radius: calc(var(--orbit-2-size) / 2);
   --dot-3-radius: calc(var(--orbit-3-size) / 2);
-
   --dot-size: clamp(6px, 0.7vw, 9px);
 }
-
-/* =========================================================
-   BACKGROUND CONTAINER
-========================================================= */
 
 .background-animation {
   position: absolute;
   inset: 0;
-
   overflow: hidden;
-
   pointer-events: none;
-
   z-index: 0;
 }
 
@@ -56,25 +26,17 @@
   opacity: 1;
 }
 
-/* =========================================================
-   BACKGROUND GRID
-========================================================= */
-
 .background-grid {
   position: absolute;
   inset: 0;
-
   background-image: radial-gradient(var(--line) 1px, transparent 1px);
-
   background-size: var(--grid-size) var(--grid-size);
 }
 
 .background-grid::before {
   content: "";
-
   position: absolute;
   inset: 0;
-
   background:
     radial-gradient(
       ellipse 900px 600px at 20% 20%,
@@ -88,24 +50,14 @@
     );
 }
 
-/* =========================================================
-   ORBITS
-========================================================= */
-
 .orbit {
   position: absolute;
-
   left: 50%;
   top: 50%;
-
   transform: translate(-50%, -50%);
-
   border-radius: 50%;
-
   border: 1px solid var(--line);
-
   animation: orbitFloat 10s ease-in-out infinite;
-
   pointer-events: none;
 }
 
@@ -117,229 +69,128 @@
 .orbit-2 {
   width: var(--orbit-2-size);
   height: var(--orbit-2-size);
-
   border-color: rgba(255, 255, 255, 0.16);
-
   animation-delay: 1.5s;
 }
 
 .orbit-3 {
   width: var(--orbit-3-size);
   height: var(--orbit-3-size);
-
   animation-delay: 3s;
 }
 
-/* =========================================================
-   ORBIT GLOW
-========================================================= */
-
 .orbit::before {
   content: "";
-
   position: absolute;
   inset: -1px;
-
   border-radius: inherit;
-
   border: inherit;
-
   opacity: 0.15;
-
   filter: blur(10px);
-
   pointer-events: none;
 }
 
-/* =========================================================
-   MOVING DOTS
-========================================================= */
-
 .dot {
   position: absolute;
-
   top: 50%;
   left: 50%;
-
   width: var(--dot-size);
   height: var(--dot-size);
-
   margin: calc(var(--dot-size) / -2);
-
   border-radius: 50%;
-
   background: var(--dot-color);
-
   box-shadow:
     0 0 8px rgba(255, 255, 255, 0.9),
     0 0 18px rgba(255, 255, 255, 0.7),
     0 0 35px rgba(255, 255, 255, 0.45);
-
   animation-timing-function: linear;
   animation-iteration-count: infinite;
-
   pointer-events: none;
 }
 
 .dot::after {
   content: "";
-
   position: absolute;
-
   inset: -8px;
-
   border-radius: 50%;
-
   background: radial-gradient(circle, var(--dot-glow), transparent 70%);
-
   opacity: 0.6;
-
   pointer-events: none;
 }
 
-/* =========================================================
-   DOT 1
-========================================================= */
-
 .dot-1 {
   offset-path: circle(var(--dot-1-radius) at 50% 50%);
-
   animation:
     orbitMove 12s linear infinite,
     dotPulse 3s ease-in-out infinite;
 }
 
-/* =========================================================
-   DOT 2
-========================================================= */
-
 .dot-2 {
   offset-path: circle(var(--dot-2-radius) at 50% 50%);
-
   animation:
     orbitMoveReverse 20s linear infinite,
     dotPulse 3s ease-in-out infinite 0.6s;
 }
-
-/* =========================================================
-   DOT 3
-========================================================= */
-
 .dot-3 {
   offset-path: circle(var(--dot-3-radius) at 50% 50%);
-
   animation:
     orbitMove 32s linear infinite,
     dotPulse 3s ease-in-out infinite 1.2s;
 }
 
-/* =========================================================
-   DOT 4
-========================================================= */
-
 .dot-4 {
   offset-path: circle(var(--dot-3-radius) at 50% 50%);
-
   offset-distance: 50%;
-
   animation:
     orbitMoveReverse 32s linear infinite,
     dotPulse 3s ease-in-out infinite 1.8s;
 }
 
-/* =========================================================
-   CUSTOM CURSOR
-========================================================= */
-
-/*
-   Keep the normal cursor visible by default.
-   This prevents the page from becoming unusable if
-   the custom cursor component hasn't mounted yet.
-*/
-
 body {
   cursor: default;
 }
 
-/* =========================================================
-   CURSOR DOT
-========================================================= */
-
 .cursor-dot {
   position: fixed;
-
   width: 10px;
   height: 10px;
-
   border-radius: 50%;
-
   transform: translate(-50%, -50%);
-
   pointer-events: none;
-
   z-index: 99999;
-
   background: var(--dot-color);
-
   box-shadow:
     0 0 8px var(--dot-glow),
     0 0 20px var(--dot-glow),
     0 0 45px var(--dot-glow);
-
   animation: cursorPulse 2s ease-in-out infinite;
 }
 
-/* =========================================================
-   CURSOR RING
-========================================================= */
-
 .cursor-ring {
   position: fixed;
-
   width: 34px;
   height: 34px;
-
   border-radius: 50%;
-
   border: 1.5px solid var(--cursor-ring);
-
   transform: translate(-50%, -50%);
-
   pointer-events: none;
-
   z-index: 99998;
-
   box-shadow: 0 0 20px var(--dot-glow);
-
   animation: cursorFloat 3s ease-in-out infinite;
-
   transition:
     left 0.12s linear,
     top 0.12s linear,
     opacity 0.2s ease;
 }
 
-/* =========================================================
-   CURSOR AURA
-========================================================= */
-
 .cursor-dot::after {
   content: "";
-
   position: absolute;
-
   inset: -10px;
-
   border-radius: 50%;
-
   background: radial-gradient(circle, var(--dot-glow) 0%, transparent 60%);
-
   animation: cursorAura 3s ease-in-out infinite;
 }
-
-/* =========================================================
-   CURSOR EFFECT TRANSITIONS
-========================================================= */
 
 .cursor-dot,
 .cursor-ring {
@@ -349,65 +200,36 @@ body {
     top 0.12s linear;
 }
 
-/* =========================================================
-   PARTICLE CONTAINER
-========================================================= */
-
 .particle-container {
   position: fixed;
-
   inset: 0;
-
   pointer-events: none;
-
   z-index: 99990;
 }
 
-/* =========================================================
-   ORBIT PARTICLES
-========================================================= */
-
 .orbit-particle {
   position: fixed;
-
   width: 4px;
   height: 4px;
-
   border-radius: 50%;
-
   background: var(--dot-color);
-
   transform: translate(-50%, -50%);
-
   box-shadow:
     0 0 6px var(--dot-glow),
     0 0 14px var(--dot-glow),
     0 0 24px var(--dot-glow);
-
   animation: orbitParticle 0.8s ease-out forwards;
 }
 
 .orbit-particle::before {
   content: "";
-
   position: absolute;
-
   inset: -2px;
-
   border-radius: inherit;
-
   background: inherit;
-
   filter: blur(3px);
-
   opacity: 0.45;
 }
-
-/* =========================================================
-   ANIMATIONS
-========================================================= */
-
-/* Orbit movement */
 
 @keyframes orbitMove {
   from {
@@ -428,8 +250,6 @@ body {
     offset-distance: 0%;
   }
 }
-
-/* Orbit floating */
 
 @keyframes orbitFloat {
   0% {
@@ -453,34 +273,25 @@ body {
   }
 }
 
-/* Dot pulse */
-
 @keyframes dotPulse {
   0%,
   100% {
     opacity: 0.45;
-
     transform: scale(1);
-
     filter: brightness(1);
   }
 
   50% {
     opacity: 1;
-
     transform: scale(1.5);
-
     filter: brightness(1.8);
   }
 }
-
-/* Cursor pulse */
 
 @keyframes cursorPulse {
   0%,
   100% {
     transform: translate(-50%, -50%) scale(1);
-
     box-shadow:
       0 0 8px var(--dot-glow),
       0 0 18px var(--dot-glow),
@@ -490,7 +301,6 @@ body {
 
   50% {
     transform: translate(-50%, -50%) scale(1.35);
-
     box-shadow:
       0 0 12px var(--dot-glow),
       0 0 25px var(--dot-glow),
@@ -498,8 +308,6 @@ body {
       0 0 80px var(--dot-glow);
   }
 }
-
-/* Cursor aura */
 
 @keyframes cursorAura {
   0%,
@@ -516,8 +324,6 @@ body {
   }
 }
 
-/* Cursor ring */
-
 @keyframes cursorFloat {
   0% {
     transform: translate(-50%, -50%) scale(1);
@@ -531,8 +337,6 @@ body {
     transform: translate(-50%, -50%) scale(1);
   }
 }
-
-/* Particle */
 
 @keyframes orbitParticle {
   0% {
@@ -558,27 +362,15 @@ body {
   }
 }
 
-/* =========================================================
-   PERFORMANCE
-========================================================= */
-
 .orbit,
 .dot,
 .cursor-dot,
 .cursor-ring,
 .orbit-particle {
   will-change: transform, opacity;
-
   backface-visibility: hidden;
-
   transform-style: preserve-3d;
 }
-
-/* =========================================================
-   TOUCH / NO-HOVER DEVICES
-   Catches phones, tablets, and touch laptops regardless
-   of screen width — more reliable than width alone.
-========================================================= */
 
 @media (hover: none), (pointer: coarse) {
   body {
@@ -592,12 +384,6 @@ body {
   }
 }
 
-/* =========================================================
-   NARROW SCREENS (<= 768px)
-   Belt-and-braces fallback for browsers that don't
-   support hover/pointer media features.
-========================================================= */
-
 @media (max-width: 768px) {
   body {
     cursor: auto;
@@ -610,12 +396,6 @@ body {
   }
 }
 
-/* =========================================================
-   SHORT VIEWPORTS / LANDSCAPE PHONES
-   Height-based orbits so they never overflow a short
-   window, independent of width.
-========================================================= */
-
 @media (max-height: 480px) and (orientation: landscape) {
   :root {
     --orbit-1-size: clamp(120px, 30vh, 300px);
@@ -623,10 +403,6 @@ body {
     --orbit-3-size: clamp(260px, 62vh, 620px);
   }
 }
-
-/* =========================================================
-   REDUCED MOTION
-========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
   .orbit,
