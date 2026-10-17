@@ -1,8 +1,5 @@
-// Import Express
 const express = require("express");
-// Create Router
 const router = express.Router();
-// Import Controllers
 const {
   registerUser,
   loginUser,
@@ -10,16 +7,12 @@ const {
   forgotPassword,
   resetPassword,
 } = require("../controllers/userController");
-
-// Middleware
 const authMiddleware = require("../middleware/authMiddleware");
 
-// Auth Routes
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/forgot-password", forgotPassword);
-router.post("/reset-password/:token", resetPassword);
+router.post("/reset-password/:tozen", resetPassword);
 router.get("/profile", authMiddleware, getProfile);
-
-// Export Router
+router.get("/me", authMiddleware, getProfile);
 module.exports = router;
