@@ -5,13 +5,16 @@ import Login from "./Pages/Login/Login";
 import Register from "./Pages/Register/Register";
 import Forgotpassword from "./Pages/Forgotpassword/Forgotpassword";
 import Home from "./Pages/Home/Home";
+import CreatePost from "./Pages/CreatePost/CreatePost";
 import Explore from "./Pages/Explore/Explore";
 import NotFound from "./Pages/NotFound/NotFound";
 import ResetPassword from "./Pages/Resetpassword/Restpassword";
 import ProtectedRoute from "./components/Navbar/ProtectedRoute/ProtectedRoute";
 function App() {
   const location = useLocation();
-  const showNavbar = ["/Home", "/Explore"].includes(location.pathname);
+  const showNavbar = ["/Home", "/Explore", "/CreatePost"].includes(
+    location.pathname,
+  );
   return (
     <>
       {showNavbar && <Navbar />}
@@ -32,6 +35,16 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/CreatePost"
+          element={
+            <ProtectedRoute>
+              <CreatePost />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/Explore"
           element={

@@ -167,7 +167,6 @@ export default function Login() {
         <div className="orbit-tick orbit-tick--left" />
       </div>
       <Box className="login-container">
-        
         {/* Left Side */}
 
         <Box className="login-left">

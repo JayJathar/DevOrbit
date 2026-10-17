@@ -1,6 +1,6 @@
 :root {
   --sidebar-w: 250px;
-  --sidebar-compact-w: 76px; 
+  --sidebar-compact-w: 76px;
   --sidebar-bg: #050505;
   --sidebar-surface: rgba(255, 255, 255, 0.035);
   --sidebar-surface-hover: rgba(255, 255, 255, 0.065);
@@ -305,6 +305,10 @@
   min-height: 20px;
 }
 
+.sidebar-profile-wrap {
+  position: relative;
+}
+
 .sidebar-profile {
   display: flex;
   align-items: center;
@@ -500,6 +504,17 @@
   color: #303030;
 }
 
+@keyframes mobile-quick-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @media (min-width: 901px) and (max-width: 1199px) {
   .sidebar {
     width: var(--sidebar-compact-w);
@@ -642,7 +657,7 @@
   }
 
   .sidebar-nav-link {
-    position: relative; 
+    position: relative;
     width: 50px;
     height: 50px;
     min-width: 44px;
@@ -741,6 +756,11 @@
     box-shadow: none;
   }
 
+  .sidebar-profile-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
   .sidebar .sidebar-profile {
     display: flex !important;
     width: 50px;
@@ -799,6 +819,82 @@
     bottom: -2px;
     border-width: 1.5px;
   }
+
+  /* Quick-menu popup for New post / Settings / Log out on mobile */
+  .mobile-quick-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: absolute;
+    bottom: calc(100% + 12px);
+    right: 0;
+    min-width: 168px;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: rgba(14, 14, 14, 0.96);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    box-shadow:
+      0 10px 30px rgba(0, 0, 0, 0.45),
+      0 2px 8px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    animation: mobile-quick-menu-in 160ms cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 1001;
+  }
+
+  .mobile-quick-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 40px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    color: #d8d8d8;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background 150ms ease,
+      color 150ms ease;
+  }
+
+  .mobile-quick-menu-item:hover,
+  .mobile-quick-menu-item:active {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+  }
+
+  .mobile-quick-menu-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .mobile-quick-menu-icon svg {
+    font-size: 17px;
+  }
+
+  .mobile-quick-menu-logout {
+    color: #ff8a8a;
+  }
+
+  .mobile-quick-menu-logout:hover,
+  .mobile-quick-menu-logout:active {
+    background: rgba(255, 90, 90, 0.12);
+    color: #ff9d9d;
+  }
 }
 
 @media (max-width: 380px) {
@@ -846,6 +942,11 @@
 
   .sidebar .sidebar-avatar-initial {
     font-size: 9px;
+  }
+
+  .mobile-quick-menu {
+    min-width: 150px;
+    right: -4px;
   }
 
   body {

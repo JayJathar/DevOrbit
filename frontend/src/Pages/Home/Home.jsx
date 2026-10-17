@@ -10,6 +10,8 @@ import ArrowOutwardRoundedIcon from "@mui/icons-material/ArrowOutwardRounded";
 import CodeRoundedIcon from "@mui/icons-material/CodeRounded";
 import PeopleOutlineRoundedIcon from "@mui/icons-material/PeopleOutlineRounded";
 import BookmarkBorderRoundedIcon from "@mui/icons-material/BookmarkBorderRounded";
+import Flares from "../Flares/Flares";
+
 const LIVE_BUILDERS = [
   {
     id: 1,
@@ -54,6 +56,11 @@ const LIVE_BUILDERS = [
     live: true,
   },
 ];
+
+// ======================================================
+// CODE SNIPPET
+// ======================================================
+
 const reactSnippet = [
   [
     { t: "kw", v: "const" },
@@ -78,6 +85,11 @@ const reactSnippet = [
   ],
   [{ t: "pl", v: "});" }],
 ];
+
+// ======================================================
+// STATIC FEED
+// ======================================================
+
 const FEED = [
   {
     id: "f1",
@@ -145,6 +157,11 @@ const FEED = [
     comments: 32,
   },
 ];
+
+// ======================================================
+// COMMENTS
+// ======================================================
+
 const INITIAL_COMMENTS = {
   f1: [
     {
@@ -164,6 +181,7 @@ const INITIAL_COMMENTS = {
       mine: false,
     },
   ],
+
   f2: [
     {
       id: "c3",
@@ -174,6 +192,7 @@ const INITIAL_COMMENTS = {
       mine: false,
     },
   ],
+
   f3: [
     {
       id: "c4",
@@ -184,6 +203,7 @@ const INITIAL_COMMENTS = {
       mine: false,
     },
   ],
+
   f5: [
     {
       id: "c5",
@@ -195,6 +215,11 @@ const INITIAL_COMMENTS = {
     },
   ],
 };
+
+// ======================================================
+// TRENDING
+// ======================================================
+
 const TRENDING = [
   {
     name: "React.js",
@@ -217,6 +242,11 @@ const TRENDING = [
     trend: "+8%",
   },
 ];
+
+// ======================================================
+// SUGGESTED
+// ======================================================
+
 const SUGGESTED = [
   {
     id: "u1",
@@ -239,277 +269,708 @@ const SUGGESTED = [
     initial: "M",
     role: "ML Researcher",
   },
-]
+];
+
+// ======================================================
+// HOME
+// ======================================================
+
 export default function Home() {
+  // ====================================================
+  // USER STATE
+  // ====================================================
+
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
+
+  // ====================================================
+  // POSTS STATE
+  // ====================================================
+
+  const [posts, setPosts] = useState([]);
+  const [loadingPosts, setLoadingPosts] = useState(true);
+
+  // ====================================================
+  // UI STATES
+  // ====================================================
+
+  const [liked, setLiked] = useState(new Set());
+
+  // Stores only the displayed like counts.
+  // We do NOT modify post.likes from MongoDB.
+  const [likeCounts, setLikeCounts] = useState({});
+
+  // Prevents multiple like requests at the same time.
+  const [savingLike, setSavingLike] = useState(new Set());
+
+  const [saved, setSaved] = useState(new Set());
+  const [following, setFollowing] = useState(new Set());
+  const [openComments, setOpenComments] = useState(new Set());
+
+  const [comments, setComments] = useState(INITIAL_COMMENTS);
+
+  const [commentText, setCommentText] = useState({});
+
+  // ====================================================
+  // FETCH LOGGED-IN USER
+  // ====================================================
+
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
+        setLoadingUser(true);
+
         const token = localStorage.getItem("token");
+
+        console.log("HOME TOKEN:", token);
+
         if (!token) {
-          console.log("❌ No JWT token found");
-          setUser(null);
+          console.error("No JWT token found in localStorage");
+
+          setLoadingUser(false);
+
           return;
         }
-        const response = await fetch(
-          "http://localhost:5000/api/users/profile",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
+
+        const response = await fetch("http://localhost:5000/api/users/me", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
-        );
+        });
+
         const data = await response.json();
-        console.log(" HOME USER RESPONSE:", data);
-        if (response.ok && data.success) {
-          setUser(data.user);
-          console.log("HOME MONGODB USER:", data.user);
+
+        console.log("HOME USER RESPONSE:", data);
+
+        if (!response.ok) {
+          console.error("Failed to fetch current user:", data.message);
+
+          setUser(null);
+
+          return;
+        }
+
+        /*
+            Expected backend response:
+
+            {
+              success: true,
+              user: {
+                _id: "...",
+                fullname: "Jay Jathar",
+                username: "Jay_Jathar",
+                email: "..."
+              }
+            }
+          */
+
+        const currentUser = data.user || data.data?.user || data.data || null;
+
+        console.log("FINAL USER DATA:", currentUser);
+
+        if (currentUser) {
+          setUser(currentUser);
         } else {
-          console.error("Failed to fetch Home user:", data.message);
+          console.error("User data not found in response");
+
           setUser(null);
         }
       } catch (error) {
-        console.error("Home user fetch error:", error);
+        console.error("HOME USER FETCH ERROR:", error);
+
         setUser(null);
       } finally {
         setLoadingUser(false);
       }
     };
+
     fetchCurrentUser();
   }, []);
+
+  // ====================================================
+  // FETCH POSTS
+  // ====================================================
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setLoadingPosts(true);
+
+        const response = await fetch("http://localhost:5000/api/posts");
+
+        const data = await response.json();
+
+        console.log("HOME POSTS RESPONSE:", data);
+
+        if (response.ok && data.success) {
+          const fetchedPosts = data.posts || [];
+
+          setPosts(fetchedPosts);
+
+          // ============================================
+          // INITIALIZE LIKE COUNTS
+          // ============================================
+
+          const initialLikeCounts = {};
+
+          fetchedPosts.forEach((post) => {
+            initialLikeCounts[post._id] = post.likes?.length || 0;
+          });
+
+          setLikeCounts(initialLikeCounts);
+        } else {
+          console.error("Failed to fetch posts:", data.message);
+
+          setPosts([]);
+
+          setLikeCounts({});
+        }
+      } catch (error) {
+        console.error("Home posts fetch error:", error);
+
+        setPosts([]);
+
+        setLikeCounts({});
+      } finally {
+        setLoadingPosts(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  // ====================================================
+  // INITIALIZE CURRENT USER'S LIKED POSTS
+  // ====================================================
+
+  useEffect(() => {
+    if (!user?._id || posts.length === 0) {
+      return;
+    }
+
+    const likedPostIds = new Set();
+
+    posts.forEach((post) => {
+      const postLikes = post.likes || [];
+
+      const hasLiked = postLikes.some((like) => {
+        const likeId = typeof like === "string" ? like : like?._id;
+
+        return likeId?.toString() === user._id.toString();
+      });
+
+      if (hasLiked) {
+        likedPostIds.add(post._id);
+      }
+    });
+
+    setLiked(likedPostIds);
+  }, [user, posts]);
+
+  // ====================================================
+  // USER DISPLAY DATA
+  // ====================================================
+
   const displayName =
-    user?.fullname ||
-    user?.fullName ||
-    user?.name ||
-    user?.displayName ||
-    "User";
-  const firstName = displayName;
-  const userInitial =
-    user?.fullname?.charAt(0)?.toUpperCase() ||
-    user?.fullName?.charAt(0)?.toUpperCase() ||
-    user?.name?.charAt(0)?.toUpperCase() ||
-    "U";
-  const [liked, setLiked] = useState(new Set());
-  const [saved, setSaved] = useState(new Set());
-  const [following, setFollowing] = useState(new Set());
-  const [openComments, setOpenComments] = useState(new Set());
-  const [comments, setComments] = useState(INITIAL_COMMENTS);
-  const [commentText, setCommentText] = useState({});
+    user?.fullname || user?.fullName || user?.name || user?.displayName || "";
+
+  const firstName = displayName ? displayName.trim().split(/\s+/)[0] : "";
+
+  const userInitial = displayName?.charAt(0)?.toUpperCase() || "U";
+
+  // ====================================================
+  // TOGGLE SET
+  // ====================================================
+
   const toggleSet = (setter) => (id) => {
     setter((previous) => {
       const next = new Set(previous);
+
       if (next.has(id)) {
         next.delete(id);
       } else {
         next.add(id);
       }
+
       return next;
     });
   };
-  const toggleLike = toggleSet(setLiked);
+
   const toggleSave = toggleSet(setSaved);
   const toggleFollow = toggleSet(setFollowing);
+
+  // ====================================================
+  // TOGGLE COMMENTS
+  // ====================================================
+
   const toggleComments = (postId) => {
     setOpenComments((previous) => {
       const next = new Set(previous);
+
       if (next.has(postId)) {
         next.delete(postId);
       } else {
         next.add(postId);
       }
+
       return next;
     });
   };
+
+  // ====================================================
+  // LIKE / UNLIKE POST
+  // ====================================================
+
+  const toggleLike = async (postId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        console.error("No JWT token found");
+
+        return;
+      }
+
+      // Prevent duplicate requests.
+      if (savingLike.has(postId)) {
+        return;
+      }
+
+      // ================================================
+      // MARK REQUEST AS LOADING
+      // ================================================
+
+      setSavingLike((previous) => {
+        const next = new Set(previous);
+
+        next.add(postId);
+
+        return next;
+      });
+
+      // ================================================
+      // SEND LIKE REQUEST TO BACKEND
+      // ================================================
+
+      const response = await fetch(
+        `http://localhost:5000/api/posts/${postId}/like`,
+        {
+          method: "POST",
+
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      console.log("LIKE RESPONSE:", data);
+
+      // ================================================
+      // CHECK RESPONSE
+      // ================================================
+
+      if (!response.ok || !data.success) {
+        console.error("Like request failed:", data.message);
+
+        return;
+      }
+
+      // ================================================
+      // UPDATE LIKED STATE
+      // ================================================
+
+      setLiked((previous) => {
+        const next = new Set(previous);
+
+        if (data.liked) {
+          next.add(postId);
+        } else {
+          next.delete(postId);
+        }
+
+        return next;
+      });
+
+      // ================================================
+      // UPDATE LIKE COUNT
+      // ================================================
+
+      setLikeCounts((previous) => ({
+        ...previous,
+        [postId]: data.likesCount,
+      }));
+    } catch (error) {
+      console.error("LIKE ERROR:", error);
+    } finally {
+      // ================================================
+      // REMOVE LOADING STATE
+      // ================================================
+
+      setSavingLike((previous) => {
+        const next = new Set(previous);
+
+        next.delete(postId);
+
+        return next;
+      });
+    }
+  };
+
+  // ====================================================
+  // COMMENT INPUT
+  // ====================================================
+
   const handleCommentChange = (postId, value) => {
     setCommentText((previous) => ({
       ...previous,
       [postId]: value,
     }));
   };
+
+  // ====================================================
+  // ADD COMMENT
+  // ====================================================
+
   const handleAddComment = (postId) => {
     const text = commentText[postId]?.trim();
+
     if (!text) {
       return;
     }
+
     const newComment = {
       id: `comment-${Date.now()}`,
-      author: displayName,
+      author: displayName || "Developer",
       initial: userInitial,
       text,
       time: "now",
       mine: true,
     };
+
     setComments((previous) => ({
       ...previous,
       [postId]: [...(previous[postId] || []), newComment],
     }));
+
     setCommentText((previous) => ({
       ...previous,
       [postId]: "",
     }));
+
     setOpenComments((previous) => {
       const next = new Set(previous);
+
       next.add(postId);
+
       return next;
     });
   };
+
+  // ====================================================
+  // COMMENT ENTER KEY
+  // ====================================================
+
   const handleCommentKeyDown = (event, postId) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
+
       handleAddComment(postId);
     }
   };
+
+  // ====================================================
+  // DELETE COMMENT
+  // ====================================================
+
   const handleDeleteComment = (postId, commentId) => {
     setComments((previous) => ({
       ...previous,
+
       [postId]: (previous[postId] || []).filter(
         (comment) => comment.id !== commentId,
       ),
     }));
   };
+
+  // ====================================================
+  // COMMENT COUNT
+  // ====================================================
+
   const getCommentCount = (item) => {
     const extraComments = comments[item.id]?.length || 0;
 
     return item.comments + extraComments;
   };
+
+  // ====================================================
+  // RENDER
+  // ====================================================
+
   return (
     <main className="home-page">
       <div className="home-orbit home-orbit--one" />
+
       <div className="home-orbit home-orbit--two" />
+
+      {/* ==================================================
+            HEADER
+        ================================================== */}
+
       <header className="home-header">
         <div>
           <div className="home-eyebrow">
             <span className="eyebrow-line" />
             DEVORBIT
           </div>
+
           <h1>
-            Welcome back, <span>{loadingUser ? "..." : firstName}</span>
+            Welcome back,{" "}
+            <span>{loadingUser ? "..." : firstName || "Developer"}</span>
           </h1>
+
           <p>
             Discover what developers are building and share what you're working
             on.
           </p>
         </div>
+
         <div className="home-header-actions">
           <div className="header-mini-stat">
             <CodeRoundedIcon fontSize="small" />
+
             <span>1,248 builders</span>
           </div>
+
           <div className="header-mini-stat">
             <span className="online-dot" />
+
             <span>86 building now</span>
           </div>
         </div>
       </header>
-      <section className="builders-section">
+
+      <Flares displayName={displayName} userInitial={userInitial} />
+
+      {/* ==================================================
+            BUILDERS
+        ================================================== */}
+
+      {/* <section className="builders-section">
         <div className="section-heading">
           <div>
             <span className="section-kicker">ACTIVE NOW</span>
+
             <h2>Builders in orbit</h2>
           </div>
+
           <button type="button" className="text-button">
             View all
             <ArrowOutwardRoundedIcon fontSize="inherit" />
           </button>
         </div>
+
         <div className="builder-list">
           {LIVE_BUILDERS.map((builder) => (
             <div className="builder" key={builder.id}>
               <div className={`builder-avatar ${builder.live ? "live" : ""}`}>
                 <span>{builder.initial}</span>
+
                 {builder.live && <i />}
               </div>
+
               <strong>{builder.name}</strong>
+
               <small>{builder.lang}</small>
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
+
+      {/* ==================================================
+            MAIN LAYOUT
+        ================================================== */}
+
       <div className="home-layout">
         <section className="feed">
           <div className="feed-heading">
             <div>
               <span className="section-kicker">YOUR ORBIT</span>
+
               <h2>Latest from the community</h2>
             </div>
+
             <button type="button" className="filter-button">
               For you
             </button>
           </div>
+
           <div className="feed-list">
-            {FEED.map((item) => (
-              <FeedCard
-                key={item.id}
-                item={item}
-                liked={liked.has(item.id)}
-                saved={saved.has(item.id)}
-                comments={comments[item.id] || []}
-                commentsOpen={openComments.has(item.id)}
-                commentText={commentText[item.id] || ""}
-                commentCount={getCommentCount(item)}
-                currentUser={user}
-                currentUserName={displayName}
-                currentUserInitial={userInitial}
-                onLike={() => toggleLike(item.id)}
-                onSave={() => toggleSave(item.id)}
-                onToggleComments={() => toggleComments(item.id)}
-                onCommentChange={(value) => handleCommentChange(item.id, value)}
-                onAddComment={() => handleAddComment(item.id)}
-                onCommentKeyDown={(event) =>
-                  handleCommentKeyDown(event, item.id)
-                }
-                onDeleteComment={(commentId) =>
-                  handleDeleteComment(item.id, commentId)
-                }
-              />
-            ))}
+            {loadingPosts ? (
+              <p>Loading posts...</p>
+            ) : posts.length === 0 ? (
+              <p>No posts yet. Be the first to share something!</p>
+            ) : (
+              posts.map((post) => {
+                // ==========================================
+                // CONVERT BACKEND POST TO FEED ITEM
+                // ==========================================
+
+                const item = {
+                  id: post._id,
+
+                  type: post.type,
+
+                  author: post.author?.fullname || "Unknown User",
+
+                  username: post.author?.username
+                    ? `@${post.author.username}`
+                    : "@user",
+
+                  initial:
+                    post.author?.fullname?.charAt(0)?.toUpperCase() || "U",
+
+                  time: post.createdAt
+                    ? new Date(post.createdAt).toLocaleDateString()
+                    : "now",
+
+                  title: post.title || "",
+
+                  body: post.content || "",
+
+                  tags: post.tags || [],
+
+                  image: post.image || "",
+
+                  video: post.video || "",
+
+                  projectUrl: post.projectUrl || "",
+
+                  githubUrl: post.githubUrl || "",
+
+                  lang: post.codeLang || "",
+
+                  code:
+                    post.type === "code"
+                      ? (post.content || "").split("\n").map((line) => [
+                          {
+                            t: "pl",
+                            v: line,
+                          },
+                        ])
+                      : [],
+
+                  // IMPORTANT:
+                  // Use likeCounts for live count.
+                  likes: likeCounts[post._id] ?? post.likes?.length ?? 0,
+
+                  comments: 0,
+                };
+
+                return (
+                  <FeedCard
+                    key={item.id}
+                    item={item}
+                    liked={liked.has(item.id)}
+                    likeSaving={savingLike.has(item.id)}
+                    saved={saved.has(item.id)}
+                    comments={comments[item.id] || []}
+                    commentsOpen={openComments.has(item.id)}
+                    commentText={commentText[item.id] || ""}
+                    commentCount={getCommentCount(item)}
+                    currentUserInitial={userInitial}
+                    onLike={() => toggleLike(item.id)}
+                    onSave={() => toggleSave(item.id)}
+                    onToggleComments={() => toggleComments(item.id)}
+                    onCommentChange={(value) =>
+                      handleCommentChange(item.id, value)
+                    }
+                    onAddComment={() => handleAddComment(item.id)}
+                    onCommentKeyDown={(event) =>
+                      handleCommentKeyDown(event, item.id)
+                    }
+                    onDeleteComment={(commentId) =>
+                      handleDeleteComment(item.id, commentId)
+                    }
+                  />
+                );
+              })
+            )}
           </div>
         </section>
+
+        {/* ==================================================
+              RIGHT SIDEBAR
+          ================================================== */}
+
         <aside className="home-right">
+          {/* ==================================================
+                TRENDING
+            ================================================== */}
+
           <div className="side-card">
             <div className="side-card-header">
               <div>
                 <span className="section-kicker">DISCOVER</span>
+
                 <h3>Trending</h3>
               </div>
+
               <ArrowOutwardRoundedIcon fontSize="small" />
             </div>
+
             <div className="trend-list">
               {TRENDING.map((item, index) => (
                 <div className="trend-item" key={item.name}>
                   <span className="trend-number">
                     {String(index + 1).padStart(2, "0")}
                   </span>
+
                   <div className="trend-info">
                     <strong>{item.name}</strong>
+
                     <small>{item.posts} posts</small>
                   </div>
+
                   <span className="trend-value">{item.trend}</span>
                 </div>
               ))}
             </div>
           </div>
+
+          {/* ==================================================
+                PEOPLE
+            ================================================== */}
+
           <div className="side-card">
             <div className="side-card-header">
               <div>
                 <span className="section-kicker">PEOPLE</span>
+
                 <h3>Who to follow</h3>
               </div>
+
               <PeopleOutlineRoundedIcon fontSize="small" />
             </div>
+
             <div className="people-list">
               {SUGGESTED.map((person) => {
                 const isFollowing = following.has(person.id);
+
                 return (
                   <div className="person" key={person.id}>
                     <div className="person-avatar">{person.initial}</div>
+
                     <div className="person-info">
                       <strong>{person.name}</strong>
+
                       <small>{person.role}</small>
                     </div>
+
                     <button
                       type="button"
                       className={`follow-button ${
@@ -524,24 +985,40 @@ export default function Home() {
               })}
             </div>
           </div>
+
+          {/* ==================================================
+                CHALLENGE
+            ================================================== */}
+
           <div className="challenge-card">
             <div className="challenge-orbit">
               <span />
             </div>
+
             <span className="section-kicker">WEEKLY CHALLENGE</span>
+
             <h3>Build something useful.</h3>
+
             <p>
               Create a keyboard-first command palette and share your solution
               with the community.
             </p>
+
             <button type="button">
               View challenge
               <ArrowOutwardRoundedIcon fontSize="small" />
             </button>
           </div>
+
+          {/* ==================================================
+                FOOTER
+            ================================================== */}
+
           <div className="home-footer">
             <span>DevOrbit</span>
+
             <span>·</span>
+
             <span>Built for builders</span>
           </div>
         </aside>
@@ -549,9 +1026,15 @@ export default function Home() {
     </main>
   );
 }
+
+// ======================================================
+// FEED CARD
+// ======================================================
+
 function FeedCard({
   item,
   liked,
+  likeSaving,
   saved,
   comments,
   commentsOpen,
@@ -566,50 +1049,145 @@ function FeedCard({
   onCommentKeyDown,
   onDeleteComment,
 }) {
+  // ====================================================
+  // MEDIA URL HELPERS
+  // ====================================================
+
+  const getMediaUrl = (media) => {
+    if (!media) {
+      return "";
+    }
+
+    if (
+      media.startsWith("http://") ||
+      media.startsWith("https://") ||
+      media.startsWith("blob:")
+    ) {
+      return media;
+    }
+
+    if (media.startsWith("/")) {
+      return `http://localhost:5000${media}`;
+    }
+
+    return `http://localhost:5000/${media}`;
+  };
+
+  // ====================================================
+  // RENDER
+  // ====================================================
+
   return (
     <article className="post-card">
+      {/* ==================================================
+            POST HEADER
+        ================================================== */}
+
       <div className="post-header">
         <div className="post-avatar">{item.initial}</div>
+
         <div className="post-author">
           <strong>{item.author}</strong>
+
           <span>
             {item.username} · {item.time}
           </span>
         </div>
+
         <button type="button" className="more-button">
           <MoreHorizRoundedIcon />
         </button>
       </div>
+
+      {/* ==================================================
+            POST CONTENT
+        ================================================== */}
+
       <div className="post-content">
-        <h3>{item.title}</h3>
+        {/* TITLE */}
+
+        {item.title && <h3>{item.title}</h3>}
+
+        {/* BODY */}
+
         {item.body && <p>{item.body}</p>}
-        {item.type === "project" && (
-          <div className="project-preview">
-            <div className="project-preview-top">
-              <span className="project-logo">
-                <span />
-              </span>
-              <span className="project-window-title">project-preview</span>
-              <span className="project-window-dot" />
-            </div>
-            <div className="project-preview-body">
-              <div className="project-lines">
-                <span />
-                <span />
-                <span />
-                <span />
-              </div>
-              <div className="project-orbit">
-                <div />
-              </div>
-            </div>
-            <div className="project-preview-footer">
-              <span>React</span>
-              <span>•</span>
-              <span>Open source</span>
-            </div>
+
+        {/* ==================================================
+              TEXT POST IMAGE
+          ================================================== */}
+
+        {item.type === "text" && item.image && (
+          <div className="post-image-wrapper">
+            <img
+              src={getMediaUrl(item.image)}
+              alt={item.title || "Post image"}
+              className="post-image"
+              onError={(event) => {
+                console.error("IMAGE FAILED TO LOAD:", event.currentTarget.src);
+              }}
+            />
           </div>
         )}
+
+        {/* ==================================================
+              PROJECT POST
+          ================================================== */}
+
+        {item.type === "project" && (
+          <>
+            {item.video ? (
+              <div className="post-video-wrapper">
+                <video
+                  src={getMediaUrl(item.video)}
+                  className="post-video"
+                  controls
+                  playsInline
+                  onError={() => {
+                    console.error("VIDEO FAILED TO LOAD:", item.video);
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="project-preview">
+                <div className="project-preview-top">
+                  <span className="project-logo">
+                    <span />
+                  </span>
+
+                  <span className="project-window-title">project-preview</span>
+
+                  <span className="project-window-dot" />
+                </div>
+
+                <div className="project-preview-body">
+                  <div className="project-lines">
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+
+                  <div className="project-orbit">
+                    <div />
+                  </div>
+                </div>
+
+                <div className="project-preview-footer">
+                  <span>React</span>
+
+                  <span>•</span>
+
+                  <span>Open source</span>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ==================================================
+              CODE POST
+          ================================================== */}
+
         {item.type === "code" && (
           <div className="code-card">
             <div className="code-header">
@@ -618,18 +1196,23 @@ function FeedCard({
                 <i />
                 <i />
               </div>
+
               <span>
                 <TerminalRoundedIcon fontSize="inherit" />
+
                 {item.title}
               </span>
+
               <small>{item.lang}</small>
             </div>
+
             <div className="code-body">
               {item.code.map((line, index) => (
                 <div className="code-line" key={index}>
                   <span className="line-number">
                     {String(index + 1).padStart(2, "0")}
                   </span>
+
                   <code>
                     {line.map((token, tokenIndex) => (
                       <span
@@ -645,17 +1228,32 @@ function FeedCard({
             </div>
           </div>
         )}
+
+        {/* ==================================================
+              TAGS
+          ================================================== */}
+
         <div className="post-tags">
           {item.tags?.map((tag) => (
             <span key={tag}>#{tag}</span>
           ))}
         </div>
       </div>
+
+      {/* ==================================================
+            ACTIONS
+        ================================================== */}
+
       <div className="post-actions">
+        {/* ==================================================
+              LIKE
+          ================================================== */}
+
         <button
           type="button"
           className={`post-action like-action ${liked ? "liked" : ""}`}
           onClick={onLike}
+          disabled={likeSaving}
           aria-label={liked ? "Unlike post" : "Like post"}
         >
           {liked ? (
@@ -663,8 +1261,14 @@ function FeedCard({
           ) : (
             <FavoriteBorderRoundedIcon fontSize="small" />
           )}
-          <span>{item.likes + (liked ? 1 : 0)}</span>
+
+          <span>{item.likes}</span>
         </button>
+
+        {/* ==================================================
+              COMMENTS
+          ================================================== */}
+
         <button
           type="button"
           className={`post-action comment-action ${
@@ -674,8 +1278,14 @@ function FeedCard({
           aria-label={commentsOpen ? "Hide comments" : "Show comments"}
         >
           <ChatBubbleOutlineRoundedIcon fontSize="small" />
+
           <span>{commentCount}</span>
         </button>
+
+        {/* ==================================================
+              SAVE
+          ================================================== */}
+
         <button
           type="button"
           className={`post-action save-action ${saved ? "saved" : ""}`}
@@ -687,22 +1297,30 @@ function FeedCard({
           ) : (
             <BookmarkBorderRoundedIcon fontSize="small" />
           )}
+
           <span>{saved ? "Saved" : "Save"}</span>
         </button>
       </div>
+
+      {/* ==================================================
+            COMMENTS
+        ================================================== */}
+
       {commentsOpen && (
         <div className="comments-section">
           <div className="comment-input-wrapper">
             <div className="comment-user-avatar">{currentUserInitial}</div>
+
             <div className="comment-input-box">
               <input
                 type="text"
                 value={commentText}
                 onChange={(event) => onCommentChange(event.target.value)}
-                onKeyDown={onCommentKeyDown}
+                onKeyDown={(event) => onCommentKeyDown(event)}
                 placeholder="Write a comment..."
                 maxLength={500}
               />
+
               <button
                 type="button"
                 onClick={onAddComment}
@@ -717,22 +1335,28 @@ function FeedCard({
               </button>
             </div>
           </div>
+
           <div className="comments-list">
             {comments.length === 0 ? (
               <div className="no-comments">
                 <ChatBubbleOutlineRoundedIcon />
+
                 <span>No comments yet. Start the conversation.</span>
               </div>
             ) : (
               comments.map((comment) => (
                 <div className="comment" key={comment.id}>
                   <div className="comment-avatar">{comment.initial}</div>
+
                   <div className="comment-content">
                     <div className="comment-meta">
                       <strong>{comment.author}</strong>
+
                       <span>{comment.time}</span>
                     </div>
+
                     <p>{comment.text}</p>
+
                     {comment.mine && (
                       <button
                         type="button"

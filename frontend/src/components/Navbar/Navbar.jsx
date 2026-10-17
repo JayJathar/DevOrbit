@@ -1,5 +1,5 @@
 import "./Navbar.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import devlogo from "../../assets/devlogo.svg";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
@@ -52,7 +52,9 @@ export default function Navbar() {
   const location = useLocation();
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
-  
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const mobileMenuRef = useRef(null);
+
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
@@ -99,7 +101,38 @@ export default function Navbar() {
 
     fetchCurrentUser();
   }, [navigate]);
-  
+
+  // Close the mobile quick-menu when tapping/clicking outside of it
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target)) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    if (mobileMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [mobileMenuOpen]);
+
+  // Close menu automatically if the viewport is resized above mobile width
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 900) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const isActive = (href) =>
     location.pathname.toLowerCase().startsWith(href.toLowerCase());
 
@@ -108,6 +141,25 @@ export default function Navbar() {
     localStorage.removeItem("user");
     setUser(null);
     navigate("/login");
+  };
+
+  // On mobile widths, tapping the profile avatar opens the quick-menu
+  // instead of navigating straight to /profile.
+  const handleProfileClick = (e) => {
+    if (window.matchMedia("(max-width: 900px)").matches) {
+      e.preventDefault();
+      setMobileMenuOpen((prev) => !prev);
+    }
+  };
+
+  const handleMobileNewPost = () => {
+    setMobileMenuOpen(false);
+    navigate("/CreatePost");
+  };
+
+  const handleMobileLogout = () => {
+    setMobileMenuOpen(false);
+    handleLogout();
   };
 
   const profileImage =
@@ -139,9 +191,7 @@ export default function Navbar() {
 
   return (
     <>
-
       <aside className="sidebar">
-
         <Link to="/" className="sidebar-brand" aria-label="DevOrbit home">
           <span className="sidebar-mark">
             <img src={devlogo} alt="DevOrbit" className="sidebar-logo" />
@@ -184,10 +234,9 @@ export default function Navbar() {
         <button
           type="button"
           className="sidebar-post-btn"
-          onClick={() => navigate("/compose")}
+          onClick={() => navigate("/CreatePost")}
           aria-label="Create new post"
         >
-
           <span className="sidebar-post-icon">
             <AddOutlinedIcon />
           </span>
@@ -201,43 +250,87 @@ export default function Navbar() {
         </button>
 
         <div className="sidebar-spacer" />
-        <Link
-          to="/profile"
-          className={`sidebar-profile ${
-            isActive("/profile") ? "is-active" : ""
-          }`}
-          aria-label="Profile"
-        >
 
-          <div className="sidebar-avatar">
-            {loadingUser ? (
-              <span className="sidebar-avatar-initial">...</span>
-            ) : profileImage ? (
-              <img
-                src={profileImage}
-                alt={displayName}
-                className="sidebar-profile-image"
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                }}
-              />
-            ) : (
-              <span className="sidebar-avatar-initial">{userInitial}</span>
-            )}
+        <div className="sidebar-profile-wrap" ref={mobileMenuRef}>
+          {mobileMenuOpen && (
+            <div className="mobile-quick-menu" role="menu">
+              <button
+                type="button"
+                className="mobile-quick-menu-item"
+                role="menuitem"
+                onClick={handleMobileNewPost}
+              >
+                <span className="mobile-quick-menu-icon">
+                  <AddOutlinedIcon />
+                </span>
+                New post
+              </button>
 
-            <span className="sidebar-avatar-status" />
-          </div>
-          <div className="sidebar-profile-info">
-            <span className="sidebar-profile-name">
-              {loadingUser ? "Loading..." : displayName}
-            </span>
-            <span className="sidebar-profile-username">
-              {loadingUser ? "" : displayUsername}
-            </span>
-          </div>
+              <Link
+                to="/settings"
+                className="mobile-quick-menu-item"
+                role="menuitem"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <span className="mobile-quick-menu-icon">
+                  <SettingsOutlinedIcon />
+                </span>
+                Settings
+              </Link>
 
-          <MoreHorizRoundedIcon className="sidebar-profile-more" />
-        </Link>
+              <button
+                type="button"
+                className="mobile-quick-menu-item mobile-quick-menu-logout"
+                role="menuitem"
+                onClick={handleMobileLogout}
+              >
+                <span className="mobile-quick-menu-icon">
+                  <LogoutRoundedIcon />
+                </span>
+                Log out
+              </button>
+            </div>
+          )}
+
+          <Link
+            to="/profile"
+            className={`sidebar-profile ${
+              isActive("/profile") ? "is-active" : ""
+            }`}
+            aria-label="Profile"
+            onClick={handleProfileClick}
+          >
+            <div className="sidebar-avatar">
+              {loadingUser ? (
+                <span className="sidebar-avatar-initial">...</span>
+              ) : profileImage ? (
+                <img
+                  src={profileImage}
+                  alt={displayName}
+                  className="sidebar-profile-image"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+              ) : (
+                <span className="sidebar-avatar-initial">{userInitial}</span>
+              )}
+
+              <span className="sidebar-avatar-status" />
+            </div>
+            <div className="sidebar-profile-info">
+              <span className="sidebar-profile-name">
+                {loadingUser ? "Loading..." : displayName}
+              </span>
+              <span className="sidebar-profile-username">
+                {loadingUser ? "" : displayUsername}
+              </span>
+            </div>
+
+            <MoreHorizRoundedIcon className="sidebar-profile-more" />
+          </Link>
+        </div>
+
         <div className="sidebar-bottom">
           <Link
             to="/settings"
