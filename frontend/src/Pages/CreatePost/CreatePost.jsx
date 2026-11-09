@@ -1,6 +1,6 @@
 import "./CreatePost.css";
 import { useEffect, useState } from "react";
-
+import { toast } from "react-toastify";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import ArticleRoundedIcon from "@mui/icons-material/ArticleRounded";
 import CodeRoundedIcon from "@mui/icons-material/CodeRounded";
@@ -42,25 +42,19 @@ const CODE_LANGS = ["JavaScript", "TypeScript", "Python", "Rust", "Go", "CSS"];
 
 const CreatePost = () => {
   const [postType, setPostType] = useState(null);
-
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState([]);
-
   const [projectUrl, setProjectUrl] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
-
   const [projectImage, setProjectImage] = useState(null);
   const [projectVideo, setProjectVideo] = useState(null);
   const [textImage, setTextImage] = useState(null);
-
   const [codeLang, setCodeLang] = useState("JavaScript");
-
   const [autosave, setAutosave] = useState("All changes saved");
 
   const selectedPostType = POST_TYPES.find((type) => type.id === postType);
-
   const SelectedTypeIcon = selectedPostType?.icon;
 
   useEffect(() => {
@@ -165,24 +159,59 @@ const CreatePost = () => {
     setAutosave("All changes saved");
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const postData = {
-      type: postType,
-      title,
-      content,
-      tags,
-      projectUrl,
-      githubUrl,
-      codeLang,
-      image: projectImage?.file || textImage?.file || null,
-      video: projectVideo?.file || null,
-    };
+    try {
+      const token = localStorage.getItem("token");
 
-    console.log("DevOrbit post:", postData);
+      if (!token) {
+        toast.error("Please login again");
+        return;
+      }
 
-    clearForm();
+      const formData = new FormData();
+
+      formData.append("type", postType);
+      formData.append("title", title);
+      formData.append("content", content);
+      formData.append("tags", JSON.stringify(tags));
+      formData.append("projectUrl", projectUrl);
+      formData.append("githubUrl", githubUrl);
+      formData.append("codeLang", codeLang);
+
+      if (projectImage?.file) {
+        formData.append("image", projectImage.file);
+      }
+
+      if (textImage?.file) {
+        formData.append("image", textImage.file);
+      }
+
+      if (projectVideo?.file) {
+        formData.append("video", projectVideo.file);
+      }
+
+      const response = await fetch("http://localhost:5000/api/posts", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to create post");
+      }
+
+      toast.success("Post published successfully!");
+
+      clearForm();
+    } catch (error) {
+      toast.error(error.message || "Something went wrong");
+    }
   };
 
   const getTypeDescription = () => {

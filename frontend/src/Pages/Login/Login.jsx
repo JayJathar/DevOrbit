@@ -144,7 +144,6 @@ export default function Login() {
         showToast(data.message, "error");
       }
     } catch (error) {
-      console.error(error);
       showToast("Server is not responding. Please try again.", "error");
     } finally {
       setLoading(false);

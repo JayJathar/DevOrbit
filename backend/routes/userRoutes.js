@@ -6,6 +6,7 @@ const {
   getProfile,
   forgotPassword,
   resetPassword,
+  getSuggestedUsers,
 } = require("../controllers/userController");
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -15,4 +16,6 @@ router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:tozen", resetPassword);
 router.get("/profile", authMiddleware, getProfile);
 router.get("/me", authMiddleware, getProfile);
+router.get("/suggested", authMiddleware, getSuggestedUsers);
+
 module.exports = router;

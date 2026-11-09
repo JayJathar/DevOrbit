@@ -24,6 +24,8 @@ const userRoutes = require("./routes/userRoutes");
 const postRoutes = require("./routes/postRoutes");
 const musicRoutes = require("./routes/musicRoutes");
 const storyRoutes = require("./routes/storyRoutes");
+const FollowRoutes = require("./routes/followRoutes");
+const commentRoutes = require("./routes/commentRoutes");
 
 // 4. Health check
 app.get("/", (req, res) => {
@@ -38,6 +40,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/music", musicRoutes);
 app.use("/api/stories", storyRoutes);
+app.use("/api/follow", FollowRoutes);
+app.use("/api/comments", commentRoutes);
 
 // 6. Handle unknown routes
 app.use((req, res) => {

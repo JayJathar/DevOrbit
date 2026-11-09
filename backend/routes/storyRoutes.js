@@ -1,23 +1,19 @@
 const express = require("express");
 const router = express.Router();
 
-const { getStories, createStory } = require("../controllers/storyController");
+const protect = require("../middleware/authMiddleware");
 
-const authMiddleware = require("../middleware/authMiddleware");
-const upload = require("../middleware/uploadMiddleware");
+const {
+  createStory,
+  getStories,
+  deleteStory,
+  recordStoryView,
+  getStoryViewers,
+} = require("../controllers/storyController");
 
-// Get active stories
-router.get("/", getStories);
-
-// Test route
-router.get("/test", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Story routes are working",
-  });
-});
-
-// Create a story with optional image upload
-router.post("/", authMiddleware, upload.single("image"), createStory);
-
+router.get("/", protect, getStories);
+router.post("/:id/view", protect, recordStoryView);
+router.get("/:id/viewers", protect, getStoryViewers);
+router.post("/", protect, createStory);
+router.delete("/:id", protect, deleteStory);
 module.exports = router;

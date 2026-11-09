@@ -27,8 +27,6 @@ import {
 import BackgroundAnimation from "../Welcome/components/BackgroundAnimation/BackgroundAnimation";
 import devlogo from "../../assets/devlogo.svg";
 
-
-
 const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 const NAME_REGEX = /^[a-zA-Z\s'-]{2,}$/;
 function getPasswordStrength(value) {
@@ -281,7 +279,6 @@ export default function Register() {
         }),
       });
       const data = await response.json();
-      console.log(data);
       if (response.ok) {
         showToast(data.message || "Account created successfully!", "success");
         setFormData({
@@ -313,12 +310,11 @@ export default function Register() {
         showToast(data.message || "Registration failed", "error");
       }
     } catch (error) {
-      console.error("Register Error:", error);
       showToast("Server is not responding. Please try again.", "error");
     } finally {
       setLoading(false);
     }
-  }; 
+  };
 
   return (
     <div className={darkMode ? "login-page dark" : "login-page light"}>
@@ -341,7 +337,7 @@ export default function Register() {
         <div className="orbit-tick orbit-tick--bottom" />
         <div className="orbit-tick orbit-tick--left" />
       </div>
-  
+
       <Box className="login-container">
         {/* Left Side */}
         <Box className="login-left">

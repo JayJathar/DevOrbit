@@ -33,7 +33,7 @@
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  min-width: 62px;
+  min-width: 70px;
   color: #fff;
 }
 
@@ -78,8 +78,8 @@
 
 .st-add {
   position: absolute;
-  top: 38px;
-  left: calc(50% + 10px);
+  top: 44px;
+  left: calc(50% + 12px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -93,20 +93,11 @@
   cursor: pointer;
 }
 
-
-.st-seg {
-  fill: none;
-  stroke: #fff;
-  stroke-width: 2.5;
-}
-
-.st-seg.seen {
-  stroke: #3a3a3a;
-}
+/* ---------- Instagram-style ring ---------- */
 
 .st-ring-empty {
   fill: none;
-  stroke: #333;
+  stroke: #4a4a4a;
   stroke-width: 1.5;
 }
 
@@ -119,16 +110,6 @@
   font-family: "Space Grotesk", sans-serif;
   font-size: 13px;
   font-weight: 600;
-}
-
-.st-sat {
-  transform-box: view-box;
-  transform-origin: 30px 30px;
-  animation: none;
-}
-
-.st-sat circle {
-  fill: #fff;
 }
 
 .st-overlay {
@@ -179,8 +160,6 @@
   }
 }
 
-
-
 .st-phone:not(.light)::before,
 .st-phone:not(.light)::after {
   content: "";
@@ -202,7 +181,6 @@
   height: 140px;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.5));
 }
-
 
 .st-orbits {
   position: absolute;
@@ -348,7 +326,6 @@
   background: rgba(0, 0, 0, 0.1);
 }
 
-
 .st-stage {
   position: relative;
   z-index: 1;
@@ -361,6 +338,37 @@
   padding: 0 28px;
   user-select: none;
   touch-action: manipulation;
+}
+
+/* ---------- Full-screen photo story (like Instagram) ---------- */
+
+.st-stage.photo {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  z-index: 1;
+}
+
+.st-stage.photo .st-photo {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  object-fit: cover; /* use "contain" if you don't want cropping */
+  pointer-events: none;
+}
+
+.st-stage.photo .st-cap {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 90px;
+  z-index: 3;
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  pointer-events: none;
 }
 
 .st-zone {
@@ -408,7 +416,6 @@
     transform: none;
   }
 }
-
 
 .st-photo {
   display: block;
@@ -467,7 +474,6 @@
   line-height: 1.7;
 }
 
-
 .st-foot {
   position: relative;
   z-index: 3;
@@ -475,6 +481,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  margin-top: auto; /* keeps the footer at the bottom when the stage is absolute */
   padding: 14px;
   color: rgba(255, 255, 255, 0.65);
   font-size: 12px;
@@ -818,7 +825,6 @@
   pointer-events: none;
 }
 
-
 .st-cover {
   position: relative;
   display: block;
@@ -839,7 +845,9 @@
   object-fit: cover;
 }
 
-
+/* =====================================================
+   MUSIC PICKER
+   ===================================================== */
 
 .st-music-overlay {
   z-index: 100000;
@@ -1295,6 +1303,12 @@
   font-size: 11px;
 }
 
+.st-music-preview-message {
+  margin: 8px 0 0;
+  color: #ff8a8a;
+  font-size: 11px;
+}
+
 /* footer */
 
 .st-music-picker-footer {
@@ -1346,6 +1360,10 @@
 .st-music-picker-footer > button:active {
   transform: scale(0.96);
 }
+
+/* =====================================================
+   SONG CARD
+   ===================================================== */
 
 .st-song-card {
   position: relative;
@@ -1529,6 +1547,10 @@
   color: rgba(0, 0, 0, 0.6);
 }
 
+/* =====================================================
+   DESKTOP NAV ARROWS
+   ===================================================== */
+
 .st-nav {
   display: none;
   position: absolute;
@@ -1624,7 +1646,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .st-sat,
   .st-word,
   .st-phone,
   .st-overlay,
@@ -1657,6 +1678,9 @@
   }
 }
 
+/* =====================================================
+   DRAGGABLE SONG CARD
+   ===================================================== */
 
 .st-song-slot.drag {
   position: absolute;
@@ -1671,7 +1695,6 @@
 
 .st-song-slot.drag.dragging {
   cursor: grabbing;
-  transform: scale(1.03);
 }
 
 .st-song-slot.drag.viewer-pos {
@@ -1682,6 +1705,30 @@
 .st-song-slot.drag.pill {
   width: auto;
   max-width: 86%;
+}
+
+/* rotate / resize handle */
+
+.st-song-rotate {
+  position: absolute;
+  right: -10px;
+  bottom: -10px;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  background: #fff;
+  color: #000;
+  cursor: nwse-resize;
+  touch-action: none;
+}
+
+.st-song-rotate svg {
+  font-size: 16px;
 }
 
 .st-song-card.pill {
@@ -1720,4 +1767,184 @@
   right: 18px;
   bottom: 2px;
   left: 18px;
+}
+
+/* =====================================================
+   TOAST
+   ===================================================== */
+
+.st-toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  z-index: 100001; /* above story overlay + music picker */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(92vw, 380px);
+  padding: 9px 12px 9px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(14, 14, 14, 0.9);
+  backdrop-filter: blur(20px);
+  color: #fff;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.1px;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.45);
+  transform: translateX(-50%);
+  animation: stToastIn 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.st-toast-icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  color: #000;
+}
+
+.st-toast-icon svg {
+  font-size: 16px;
+}
+
+.st-toast.error {
+  border-color: rgba(255, 138, 138, 0.35);
+}
+
+.st-toast.error .st-toast-icon {
+  background: #ff8a8a;
+  color: #000;
+}
+
+.st-toast-message {
+  line-height: 1.4;
+}
+
+.st-toast button {
+  display: grid;
+  place-items: center;
+  margin-left: 4px;
+  padding: 2px;
+  border: 0;
+  background: transparent;
+  color: #aaa;
+  cursor: pointer;
+}
+
+.st-toast button:hover {
+  color: #fff;
+}
+
+@keyframes stToastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -12px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .st-toast {
+    animation: none;
+  }
+}
+
+/* =====================================================
+   DELETE CONFIRM
+   ===================================================== */
+
+.st-confirm {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  animation: stFade 160ms ease;
+}
+
+.st-confirm-box {
+  width: 100%;
+  max-width: 300px;
+  padding: 22px 20px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 18px;
+  background: #121212;
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  animation: stPop 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.st-confirm-box h4 {
+  margin: 0 0 6px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.st-confirm-box p {
+  margin: 0 0 18px;
+  color: #9a9a9a;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.st-confirm-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.st-confirm-actions button {
+  flex: 1;
+  padding: 11px 0;
+  border: 0;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease;
+}
+
+.st-confirm-actions button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.st-confirm-actions button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.st-confirm-cancel {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.st-confirm-cancel:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.st-confirm-delete {
+  background: #ff5c5c;
+  color: #000;
+}
+
+.st-confirm-delete:hover:not(:disabled) {
+  background: #ff7676;
 }

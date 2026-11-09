@@ -57,10 +57,6 @@ const LIVE_BUILDERS = [
   },
 ];
 
-// ======================================================
-// CODE SNIPPET
-// ======================================================
-
 const reactSnippet = [
   [
     { t: "kw", v: "const" },
@@ -85,11 +81,6 @@ const reactSnippet = [
   ],
   [{ t: "pl", v: "});" }],
 ];
-
-// ======================================================
-// STATIC FEED
-// ======================================================
-
 const FEED = [
   {
     id: "f1",
@@ -158,10 +149,6 @@ const FEED = [
   },
 ];
 
-// ======================================================
-// COMMENTS
-// ======================================================
-
 const INITIAL_COMMENTS = {
   f1: [
     {
@@ -216,10 +203,6 @@ const INITIAL_COMMENTS = {
   ],
 };
 
-// ======================================================
-// TRENDING
-// ======================================================
-
 const TRENDING = [
   {
     name: "React.js",
@@ -242,10 +225,6 @@ const TRENDING = [
     trend: "+8%",
   },
 ];
-
-// ======================================================
-// SUGGESTED
-// ======================================================
 
 const SUGGESTED = [
   {
@@ -271,49 +250,92 @@ const SUGGESTED = [
   },
 ];
 
-// ======================================================
-// HOME
-// ======================================================
-
 export default function Home() {
-  // ====================================================
-  // USER STATE
-  // ====================================================
-
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
-
-  // ====================================================
-  // POSTS STATE
-  // ====================================================
-
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
-
-  // ====================================================
-  // UI STATES
-  // ====================================================
-
   const [liked, setLiked] = useState(new Set());
-
-  // Stores only the displayed like counts.
-  // We do NOT modify post.likes from MongoDB.
   const [likeCounts, setLikeCounts] = useState({});
-
-  // Prevents multiple like requests at the same time.
   const [savingLike, setSavingLike] = useState(new Set());
-
   const [saved, setSaved] = useState(new Set());
   const [following, setFollowing] = useState(new Set());
+  const [suggestedUsers, setSuggestedUsers] = useState([]);
+  const [loadingSuggested, setLoadingSuggested] = useState(true);
+  const [savingFollow, setSavingFollow] = useState(new Set());
   const [openComments, setOpenComments] = useState(new Set());
-
-  const [comments, setComments] = useState(INITIAL_COMMENTS);
-
+  const [comments, setComments] = useState({});
   const [commentText, setCommentText] = useState({});
+  const [loadingComments, setLoadingComments] = useState(new Set());
+  const [savingComment, setSavingComment] = useState(new Set());
+  const [deletingComment, setDeletingComment] = useState(new Set());
+  const [commentCounts, setCommentCounts] = useState({});
+  const [savingReply, setSavingReply] = useState(new Set());
 
-  // ====================================================
-  // FETCH LOGGED-IN USER
-  // ====================================================
+  const handleAddReply = async (postId, commentId, text) => {
+    if (!text.trim() || savingReply.has(commentId)) {
+      return false;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) return false;
+
+      setSavingReply((previous) => new Set(previous).add(commentId));
+
+      const response = await fetch(
+        `http://localhost:5000/api/comments/${postId}/comments`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            text: text.trim(),
+            parentComment: commentId,
+          }),
+        },
+      );
+
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        return false;
+      }
+
+      const newReply = {
+        id: data.comment._id,
+        author: data.comment.author?.fullname || displayName || "Developer",
+        initial: userInitial,
+        text: data.comment.text,
+        time: "Just now",
+        mine: true,
+      };
+
+      setComments((previous) => ({
+        ...previous,
+        [postId]: (previous[postId] || []).map((comment) =>
+          comment.id === commentId
+            ? {
+                ...comment,
+                replies: [...(comment.replies || []), newReply],
+              }
+            : comment,
+        ),
+      }));
+
+      return true;
+    } catch (error) {
+      return false;
+    } finally {
+      setSavingReply((previous) => {
+        const next = new Set(previous);
+        next.delete(commentId);
+        return next;
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -322,11 +344,7 @@ export default function Home() {
 
         const token = localStorage.getItem("token");
 
-        console.log("HOME TOKEN:", token);
-
         if (!token) {
-          console.error("No JWT token found in localStorage");
-
           setLoadingUser(false);
 
           return;
@@ -342,33 +360,27 @@ export default function Home() {
 
         const data = await response.json();
 
-        console.log("HOME USER RESPONSE:", data);
-
         if (!response.ok) {
-          console.error("Failed to fetch current user:", data.message);
-
           setUser(null);
 
           return;
         }
 
         /*
-            Expected backend response:
+              Expected backend response:
 
-            {
-              success: true,
-              user: {
-                _id: "...",
-                fullname: "Jay Jathar",
-                username: "Jay_Jathar",
-                email: "..."
+              {
+                success: true,
+                user: {
+                  _id: "...",
+                  fullname: "Jay Jathar",
+                  username: "Jay_Jathar",
+                  email: "..."
+                }
               }
-            }
-          */
+            */
 
         const currentUser = data.user || data.data?.user || data.data || null;
-
-        console.log("FINAL USER DATA:", currentUser);
 
         if (currentUser) {
           setUser(currentUser);
@@ -389,50 +401,91 @@ export default function Home() {
     fetchCurrentUser();
   }, []);
 
-  // ====================================================
-  // FETCH POSTS
-  // ====================================================
-
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         setLoadingPosts(true);
 
-        const response = await fetch("http://localhost:5000/api/posts");
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          setPosts([]);
+          return;
+        }
+
+        const response = await fetch(
+          "http://localhost:5000/api/posts/following",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          },
+        );
 
         const data = await response.json();
 
-        console.log("HOME POSTS RESPONSE:", data);
-
-        if (response.ok && data.success) {
-          const fetchedPosts = data.posts || [];
-
-          setPosts(fetchedPosts);
-
-          // ============================================
-          // INITIALIZE LIKE COUNTS
-          // ============================================
-
-          const initialLikeCounts = {};
-
-          fetchedPosts.forEach((post) => {
-            initialLikeCounts[post._id] = post.likes?.length || 0;
-          });
-
-          setLikeCounts(initialLikeCounts);
-        } else {
-          console.error("Failed to fetch posts:", data.message);
-
+        if (!response.ok || !data.success) {
+          console.error("Failed to fetch following posts:", data.message);
           setPosts([]);
-
           setLikeCounts({});
+          setCommentCounts({});
+          return;
         }
+
+        const fetchedPosts = data.posts || [];
+
+        setPosts(fetchedPosts);
+
+        const initialLikeCounts = {};
+
+        fetchedPosts.forEach((post) => {
+          initialLikeCounts[post._id] = post.likes?.length || 0;
+        });
+
+        setLikeCounts(initialLikeCounts);
+
+        const countResults = await Promise.all(
+          fetchedPosts.map(async (post) => {
+            try {
+              const res = await fetch(
+                `http://localhost:5000/api/comments/${post._id}/comments`,
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                },
+              );
+
+              const commentData = await res.json();
+
+              return {
+                postId: post._id,
+                count:
+                  res.ok && commentData.success
+                    ? (commentData.totalComments ??
+                      commentData.comments?.length ??
+                      0)
+                    : 0,
+              };
+            } catch (error) {
+              console.error("COMMENT COUNT ERROR:", error);
+              return { postId: post._id, count: 0 };
+            }
+          }),
+        );
+
+        const counts = {};
+
+        countResults.forEach(({ postId, count }) => {
+          counts[postId] = count;
+        });
+
+        setCommentCounts(counts);
       } catch (error) {
-        console.error("Home posts fetch error:", error);
-
+        console.error("Following posts fetch error:", error);
         setPosts([]);
-
         setLikeCounts({});
+        setCommentCounts({});
       } finally {
         setLoadingPosts(false);
       }
@@ -440,10 +493,6 @@ export default function Home() {
 
     fetchPosts();
   }, []);
-
-  // ====================================================
-  // INITIALIZE CURRENT USER'S LIKED POSTS
-  // ====================================================
 
   useEffect(() => {
     if (!user?._id || posts.length === 0) {
@@ -469,20 +518,12 @@ export default function Home() {
     setLiked(likedPostIds);
   }, [user, posts]);
 
-  // ====================================================
-  // USER DISPLAY DATA
-  // ====================================================
-
   const displayName =
     user?.fullname || user?.fullName || user?.name || user?.displayName || "";
 
   const firstName = displayName ? displayName.trim().split(/\s+/)[0] : "";
 
   const userInitial = displayName?.charAt(0)?.toUpperCase() || "U";
-
-  // ====================================================
-  // TOGGLE SET
-  // ====================================================
 
   const toggleSet = (setter) => (id) => {
     setter((previous) => {
@@ -499,29 +540,77 @@ export default function Home() {
   };
 
   const toggleSave = toggleSet(setSaved);
-  const toggleFollow = toggleSet(setFollowing);
 
-  // ====================================================
-  // TOGGLE COMMENTS
-  // ====================================================
-
-  const toggleComments = (postId) => {
-    setOpenComments((previous) => {
-      const next = new Set(previous);
-
-      if (next.has(postId)) {
+  const toggleComments = async (postId) => {
+    if (openComments.has(postId)) {
+      setOpenComments((previous) => {
+        const next = new Set(previous);
         next.delete(postId);
-      } else {
-        next.add(postId);
+        return next;
+      });
+      return;
+    }
+
+    setOpenComments((previous) => new Set(previous).add(postId));
+
+    if (Object.prototype.hasOwnProperty.call(comments, postId)) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+
+      setLoadingComments((previous) => new Set(previous).add(postId));
+
+      const response = await fetch(
+        `http://localhost:5000/api/comments/${postId}/comments`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        console.error(data.message);
+        return;
       }
 
-      return next;
-    });
-  };
+      const formattedComments = data.comments.map((comment) => ({
+        id: comment._id,
+        author: comment.author?.fullname || "Unknown User",
+        initial: comment.author?.fullname?.charAt(0)?.toUpperCase() || "U",
+        text: comment.text,
+        time: new Date(comment.createdAt).toLocaleString(),
+        mine: comment.author?._id === user?._id,
 
-  // ====================================================
-  // LIKE / UNLIKE POST
-  // ====================================================
+        // Fetch replies
+        replies: (comment.replies || []).map((reply) => ({
+          id: reply._id,
+          author: reply.author?.fullname || "Unknown User",
+          initial: reply.author?.fullname?.charAt(0)?.toUpperCase() || "U",
+          text: reply.text,
+          time: new Date(reply.createdAt).toLocaleString(),
+          mine: reply.author?._id === user?._id,
+        })),
+      }));
+
+      setComments((previous) => ({
+        ...previous,
+        [postId]: formattedComments,
+      }));
+    } catch (error) {
+      console.error("GET COMMENTS ERROR:", error);
+    } finally {
+      setLoadingComments((previous) => {
+        const next = new Set(previous);
+        next.delete(postId);
+        return next;
+      });
+    }
+  };
 
   const toggleLike = async (postId) => {
     try {
@@ -533,14 +622,9 @@ export default function Home() {
         return;
       }
 
-      // Prevent duplicate requests.
       if (savingLike.has(postId)) {
         return;
       }
-
-      // ================================================
-      // MARK REQUEST AS LOADING
-      // ================================================
 
       setSavingLike((previous) => {
         const next = new Set(previous);
@@ -549,10 +633,6 @@ export default function Home() {
 
         return next;
       });
-
-      // ================================================
-      // SEND LIKE REQUEST TO BACKEND
-      // ================================================
 
       const response = await fetch(
         `http://localhost:5000/api/posts/${postId}/like`,
@@ -568,21 +648,11 @@ export default function Home() {
 
       const data = await response.json();
 
-      console.log("LIKE RESPONSE:", data);
-
-      // ================================================
-      // CHECK RESPONSE
-      // ================================================
-
       if (!response.ok || !data.success) {
         console.error("Like request failed:", data.message);
 
         return;
       }
-
-      // ================================================
-      // UPDATE LIKED STATE
-      // ================================================
 
       setLiked((previous) => {
         const next = new Set(previous);
@@ -596,10 +666,6 @@ export default function Home() {
         return next;
       });
 
-      // ================================================
-      // UPDATE LIKE COUNT
-      // ================================================
-
       setLikeCounts((previous) => ({
         ...previous,
         [postId]: data.likesCount,
@@ -607,10 +673,6 @@ export default function Home() {
     } catch (error) {
       console.error("LIKE ERROR:", error);
     } finally {
-      // ================================================
-      // REMOVE LOADING STATE
-      // ================================================
-
       setSavingLike((previous) => {
         const next = new Set(previous);
 
@@ -621,9 +683,96 @@ export default function Home() {
     }
   };
 
-  // ====================================================
-  // COMMENT INPUT
-  // ====================================================
+  const toggleFollow = async (targetUserId) => {
+    const token = localStorage.getItem("token");
+
+    if (!token || savingFollow.has(targetUserId)) {
+      return;
+    }
+
+    const isFollowing = following.has(targetUserId);
+
+    // Correct backend route
+    const url = `http://localhost:5000/api/follow/${targetUserId}/${
+      isFollowing ? "unfollow" : "follow"
+    }`;
+
+    setSavingFollow((prev) => new Set(prev).add(targetUserId));
+
+    try {
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        console.error("Follow action failed:", data.message);
+        return;
+      }
+
+      // Update the button only after the API succeeds
+      setFollowing((prev) => {
+        const next = new Set(prev);
+
+        if (isFollowing) {
+          next.delete(targetUserId);
+        } else {
+          next.add(targetUserId);
+        }
+
+        return next;
+      });
+    } catch (error) {
+      console.error("FOLLOW ERROR:", error);
+    } finally {
+      setSavingFollow((prev) => {
+        const next = new Set(prev);
+        next.delete(targetUserId);
+        return next;
+      });
+    }
+  };
+
+  // Fetch suggested users
+  useEffect(() => {
+    const fetchSuggested = async () => {
+      try {
+        setLoadingSuggested(true);
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const response = await fetch(
+          "http://localhost:5000/api/users/suggested",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          setSuggestedUsers(data.users || []);
+        }
+      } catch (error) {
+        console.error("SUGGESTED FETCH ERROR:", error);
+      } finally {
+        setLoadingSuggested(false);
+      }
+    };
+
+    fetchSuggested();
+  }, []);
+
+  // Initialize following from logged-in user
+  useEffect(() => {
+    if (!user?.following) return;
+    const ids = user.following.map((f) => (typeof f === "string" ? f : f?._id));
+    setFollowing(new Set(ids));
+  }, [user]);
 
   const handleCommentChange = (postId, value) => {
     setCommentText((previous) => ({
@@ -631,49 +780,72 @@ export default function Home() {
       [postId]: value,
     }));
   };
-
-  // ====================================================
-  // ADD COMMENT
-  // ====================================================
-
-  const handleAddComment = (postId) => {
+  const handleAddComment = async (postId) => {
     const text = commentText[postId]?.trim();
 
-    if (!text) {
-      return;
+    if (!text || savingComment.has(postId)) return;
+
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) return;
+
+      setSavingComment((previous) => new Set(previous).add(postId));
+
+      const response = await fetch(
+        `http://localhost:5000/api/comments/${postId}/comments`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        console.error(data.message);
+        return;
+      }
+
+      const newComment = {
+        id: data.comment._id,
+        author: data.comment.author?.fullname || displayName || "Developer",
+        initial: userInitial,
+        text: data.comment.text,
+        time: "Just now",
+        mine: true,
+        replies: [],
+      };
+
+      setComments((previous) => ({
+        ...previous,
+        [postId]: [newComment, ...(previous[postId] || [])],
+      }));
+
+      // Increase count only once
+      setCommentCounts((previous) => ({
+        ...previous,
+        [postId]: (previous[postId] || 0) + 1,
+      }));
+
+      setCommentText((previous) => ({
+        ...previous,
+        [postId]: "",
+      }));
+    } catch (error) {
+      console.error("ADD COMMENT ERROR:", error);
+    } finally {
+      setSavingComment((previous) => {
+        const next = new Set(previous);
+        next.delete(postId);
+        return next;
+      });
     }
-
-    const newComment = {
-      id: `comment-${Date.now()}`,
-      author: displayName || "Developer",
-      initial: userInitial,
-      text,
-      time: "now",
-      mine: true,
-    };
-
-    setComments((previous) => ({
-      ...previous,
-      [postId]: [...(previous[postId] || []), newComment],
-    }));
-
-    setCommentText((previous) => ({
-      ...previous,
-      [postId]: "",
-    }));
-
-    setOpenComments((previous) => {
-      const next = new Set(previous);
-
-      next.add(postId);
-
-      return next;
-    });
   };
-
-  // ====================================================
-  // COMMENT ENTER KEY
-  // ====================================================
 
   const handleCommentKeyDown = (event, postId) => {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -683,44 +855,72 @@ export default function Home() {
     }
   };
 
-  // ====================================================
-  // DELETE COMMENT
-  // ====================================================
+  const handleDeleteComment = async (postId, commentId) => {
+    try {
+      const token = localStorage.getItem("token");
 
-  const handleDeleteComment = (postId, commentId) => {
-    setComments((previous) => ({
-      ...previous,
+      if (!token || deletingComment.has(commentId)) return;
 
-      [postId]: (previous[postId] || []).filter(
-        (comment) => comment.id !== commentId,
-      ),
-    }));
+      setDeletingComment((previous) => new Set(previous).add(commentId));
+
+      const response = await fetch(
+        `http://localhost:5000/api/comments/${commentId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        console.error("Failed to delete comment:", data.message);
+        return;
+      }
+
+      const isParentComment = (comments[postId] || []).some(
+        (comment) => comment.id === commentId,
+      );
+
+      setComments((previous) => ({
+        ...previous,
+        [postId]: (previous[postId] || [])
+          .filter((comment) => comment.id !== commentId)
+          .map((comment) => ({
+            ...comment,
+            replies: (comment.replies || []).filter(
+              (reply) => reply.id !== commentId,
+            ),
+          })),
+      }));
+      if (isParentComment) {
+        setCommentCounts((previous) => ({
+          ...previous,
+          [postId]: Math.max((previous[postId] || 0) - 1, 0),
+        }));
+      }
+    } catch (error) {
+      console.error("DELETE COMMENT ERROR:", error);
+    } finally {
+      setDeletingComment((previous) => {
+        const next = new Set(previous);
+        next.delete(commentId);
+        return next;
+      });
+    }
   };
-
-  // ====================================================
-  // COMMENT COUNT
-  // ====================================================
 
   const getCommentCount = (item) => {
-    const extraComments = comments[item.id]?.length || 0;
-
-    return item.comments + extraComments;
+    return commentCounts[item.id] ?? comments[item.id]?.length ?? 0;
   };
-
-  // ====================================================
-  // RENDER
-  // ====================================================
 
   return (
     <main className="home-page">
       <div className="home-orbit home-orbit--one" />
-
       <div className="home-orbit home-orbit--two" />
-
-      {/* ==================================================
-            HEADER
-        ================================================== */}
-
       <header className="home-header">
         <div>
           <div className="home-eyebrow">
@@ -757,43 +957,39 @@ export default function Home() {
       <Flares displayName={displayName} userInitial={userInitial} />
 
       {/* ==================================================
-            BUILDERS
-        ================================================== */}
+              BUILDERS
+          ================================================== */}
 
       {/* <section className="builders-section">
-        <div className="section-heading">
-          <div>
-            <span className="section-kicker">ACTIVE NOW</span>
+          <div className="section-heading">
+            <div>
+              <span className="section-kicker">ACTIVE NOW</span>
 
-            <h2>Builders in orbit</h2>
+              <h2>Builders in orbit</h2>
+            </div>
+
+            <button type="button" className="text-button">
+              View all
+              <ArrowOutwardRoundedIcon fontSize="inherit" />
+            </button>
           </div>
 
-          <button type="button" className="text-button">
-            View all
-            <ArrowOutwardRoundedIcon fontSize="inherit" />
-          </button>
-        </div>
+          <div className="builder-list">
+            {LIVE_BUILDERS.map((builder) => (
+              <div className="builder" key={builder.id}>
+                <div className={`builder-avatar ${builder.live ? "live" : ""}`}>
+                  <span>{builder.initial}</span>
 
-        <div className="builder-list">
-          {LIVE_BUILDERS.map((builder) => (
-            <div className="builder" key={builder.id}>
-              <div className={`builder-avatar ${builder.live ? "live" : ""}`}>
-                <span>{builder.initial}</span>
+                  {builder.live && <i />}
+                </div>
 
-                {builder.live && <i />}
+                <strong>{builder.name}</strong>
+
+                <small>{builder.lang}</small>
               </div>
-
-              <strong>{builder.name}</strong>
-
-              <small>{builder.lang}</small>
-            </div>
-          ))}
-        </div>
-      </section> */}
-
-      {/* ==================================================
-            MAIN LAYOUT
-        ================================================== */}
+            ))}
+          </div>
+        </section> */}
 
       <div className="home-layout">
         <section className="feed">
@@ -801,7 +997,7 @@ export default function Home() {
             <div>
               <span className="section-kicker">YOUR ORBIT</span>
 
-              <h2>Latest from the community</h2>
+              <h2>Posts from people you follow</h2>
             </div>
 
             <button type="button" className="filter-button">
@@ -816,15 +1012,9 @@ export default function Home() {
               <p>No posts yet. Be the first to share something!</p>
             ) : (
               posts.map((post) => {
-                // ==========================================
-                // CONVERT BACKEND POST TO FEED ITEM
-                // ==========================================
-
                 const item = {
                   id: post._id,
-
                   type: post.type,
-
                   author: post.author?.fullname || "Unknown User",
 
                   username: post.author?.username
@@ -864,8 +1054,6 @@ export default function Home() {
                         ])
                       : [],
 
-                  // IMPORTANT:
-                  // Use likeCounts for live count.
                   likes: likeCounts[post._id] ?? post.likes?.length ?? 0,
 
                   comments: 0,
@@ -877,14 +1065,16 @@ export default function Home() {
                     item={item}
                     liked={liked.has(item.id)}
                     likeSaving={savingLike.has(item.id)}
+                    onLike={() => toggleLike(item.id)}
                     saved={saved.has(item.id)}
+                    onSave={() => toggleSave(item.id)}
                     comments={comments[item.id] || []}
                     commentsOpen={openComments.has(item.id)}
                     commentText={commentText[item.id] || ""}
                     commentCount={getCommentCount(item)}
-                    currentUserInitial={userInitial}
-                    onLike={() => toggleLike(item.id)}
-                    onSave={() => toggleSave(item.id)}
+                    loadingComments={loadingComments.has(item.id)}
+                    savingComment={savingComment.has(item.id)}
+                    deletingComment={deletingComment}
                     onToggleComments={() => toggleComments(item.id)}
                     onCommentChange={(value) =>
                       handleCommentChange(item.id, value)
@@ -896,6 +1086,11 @@ export default function Home() {
                     onDeleteComment={(commentId) =>
                       handleDeleteComment(item.id, commentId)
                     }
+                    savingReply={savingReply}
+                    onAddReply={(commentId, text) =>
+                      handleAddReply(item.id, commentId, text)
+                    }
+                    currentUserInitial={userInitial}
                   />
                 );
               })
@@ -903,15 +1098,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ==================================================
-              RIGHT SIDEBAR
-          ================================================== */}
-
         <aside className="home-right">
-          {/* ==================================================
-                TRENDING
-            ================================================== */}
-
           <div className="side-card">
             <div className="side-card-header">
               <div>
@@ -942,10 +1129,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* ==================================================
-                PEOPLE
-            ================================================== */}
-
           <div className="side-card">
             <div className="side-card-header">
               <div>
@@ -958,39 +1141,41 @@ export default function Home() {
             </div>
 
             <div className="people-list">
-              {SUGGESTED.map((person) => {
-                const isFollowing = following.has(person.id);
+              {loadingSuggested ? (
+                <p>Loading...</p>
+              ) : suggestedUsers.length === 0 ? (
+                <p>No suggestions right now.</p>
+              ) : (
+                suggestedUsers.map((person) => {
+                  const isFollowing = following.has(person._id);
 
-                return (
-                  <div className="person" key={person.id}>
-                    <div className="person-avatar">{person.initial}</div>
+                  return (
+                    <div className="person" key={person._id}>
+                      <div className="person-avatar">
+                        {person.fullname?.charAt(0)?.toUpperCase() || "U"}
+                      </div>
 
-                    <div className="person-info">
-                      <strong>{person.name}</strong>
+                      <div className="person-info">
+                        <strong>{person.fullname}</strong>
+                        <small>@{person.username}</small>
+                      </div>
 
-                      <small>{person.role}</small>
+                      <button
+                        type="button"
+                        className={`follow-button ${isFollowing ? "following" : ""}`}
+                        onClick={() => toggleFollow(person._id)}
+                        disabled={savingFollow.has(person._id)}
+                      >
+                        {isFollowing ? "Following" : "Follow"}
+                      </button>
                     </div>
-
-                    <button
-                      type="button"
-                      className={`follow-button ${
-                        isFollowing ? "following" : ""
-                      }`}
-                      onClick={() => toggleFollow(person.id)}
-                    >
-                      {isFollowing ? "Following" : "Follow"}
-                    </button>
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
           </div>
 
-          {/* ==================================================
-                CHALLENGE
-            ================================================== */}
-
-          <div className="challenge-card">
+          {/* <div className="challenge-card">
             <div className="challenge-orbit">
               <span />
             </div>
@@ -1008,11 +1193,7 @@ export default function Home() {
               View challenge
               <ArrowOutwardRoundedIcon fontSize="small" />
             </button>
-          </div>
-
-          {/* ==================================================
-                FOOTER
-            ================================================== */}
+          </div> */}
 
           <div className="home-footer">
             <span>DevOrbit</span>
@@ -1027,10 +1208,6 @@ export default function Home() {
   );
 }
 
-// ======================================================
-// FEED CARD
-// ======================================================
-
 function FeedCard({
   item,
   liked,
@@ -1041,6 +1218,11 @@ function FeedCard({
   commentText,
   commentCount,
   currentUserInitial,
+  loadingComments,
+  savingComment,
+  savingReply,
+  deletingComment,
+  onAddReply,
   onLike,
   onSave,
   onToggleComments,
@@ -1049,9 +1231,8 @@ function FeedCard({
   onCommentKeyDown,
   onDeleteComment,
 }) {
-  // ====================================================
-  // MEDIA URL HELPERS
-  // ====================================================
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [replyText, setReplyText] = useState({});
 
   const getMediaUrl = (media) => {
     if (!media) {
@@ -1073,16 +1254,8 @@ function FeedCard({
     return `http://localhost:5000/${media}`;
   };
 
-  // ====================================================
-  // RENDER
-  // ====================================================
-
   return (
     <article className="post-card">
-      {/* ==================================================
-            POST HEADER
-        ================================================== */}
-
       <div className="post-header">
         <div className="post-avatar">{item.initial}</div>
 
@@ -1099,22 +1272,9 @@ function FeedCard({
         </button>
       </div>
 
-      {/* ==================================================
-            POST CONTENT
-        ================================================== */}
-
       <div className="post-content">
-        {/* TITLE */}
-
         {item.title && <h3>{item.title}</h3>}
-
-        {/* BODY */}
-
         {item.body && <p>{item.body}</p>}
-
-        {/* ==================================================
-              TEXT POST IMAGE
-          ================================================== */}
 
         {item.type === "text" && item.image && (
           <div className="post-image-wrapper">
@@ -1128,10 +1288,6 @@ function FeedCard({
             />
           </div>
         )}
-
-        {/* ==================================================
-              PROJECT POST
-          ================================================== */}
 
         {item.type === "project" && (
           <>
@@ -1184,10 +1340,6 @@ function FeedCard({
           </>
         )}
 
-        {/* ==================================================
-              CODE POST
-          ================================================== */}
-
         {item.type === "code" && (
           <div className="code-card">
             <div className="code-header">
@@ -1229,10 +1381,6 @@ function FeedCard({
           </div>
         )}
 
-        {/* ==================================================
-              TAGS
-          ================================================== */}
-
         <div className="post-tags">
           {item.tags?.map((tag) => (
             <span key={tag}>#{tag}</span>
@@ -1240,15 +1388,7 @@ function FeedCard({
         </div>
       </div>
 
-      {/* ==================================================
-            ACTIONS
-        ================================================== */}
-
       <div className="post-actions">
-        {/* ==================================================
-              LIKE
-          ================================================== */}
-
         <button
           type="button"
           className={`post-action like-action ${liked ? "liked" : ""}`}
@@ -1265,26 +1405,14 @@ function FeedCard({
           <span>{item.likes}</span>
         </button>
 
-        {/* ==================================================
-              COMMENTS
-          ================================================== */}
-
         <button
           type="button"
-          className={`post-action comment-action ${
-            commentsOpen ? "active" : ""
-          }`}
+          className="post-action comment-action"
           onClick={onToggleComments}
-          aria-label={commentsOpen ? "Hide comments" : "Show comments"}
         >
           <ChatBubbleOutlineRoundedIcon fontSize="small" />
-
           <span>{commentCount}</span>
         </button>
-
-        {/* ==================================================
-              SAVE
-          ================================================== */}
 
         <button
           type="button"
@@ -1301,10 +1429,6 @@ function FeedCard({
           <span>{saved ? "Saved" : "Save"}</span>
         </button>
       </div>
-
-      {/* ==================================================
-            COMMENTS
-        ================================================== */}
 
       {commentsOpen && (
         <div className="comments-section">
@@ -1324,23 +1448,24 @@ function FeedCard({
               <button
                 type="button"
                 onClick={onAddComment}
-                disabled={!commentText.trim()}
+                disabled={!commentText.trim() || savingComment}
                 className={
                   commentText.trim()
                     ? "comment-submit active"
                     : "comment-submit"
                 }
               >
-                Post
+                {savingComment ? "Posting..." : "Post"}
               </button>
             </div>
           </div>
 
           <div className="comments-list">
-            {comments.length === 0 ? (
+            {loadingComments ? (
+              <p>Loading comments...</p>
+            ) : comments.length === 0 ? (
               <div className="no-comments">
                 <ChatBubbleOutlineRoundedIcon />
-
                 <span>No comments yet. Start the conversation.</span>
               </div>
             ) : (
@@ -1351,20 +1476,139 @@ function FeedCard({
                   <div className="comment-content">
                     <div className="comment-meta">
                       <strong>{comment.author}</strong>
-
                       <span>{comment.time}</span>
                     </div>
 
                     <p>{comment.text}</p>
 
-                    {comment.mine && (
+                    <div className="comment-actions">
                       <button
                         type="button"
-                        className="delete-comment"
-                        onClick={() => onDeleteComment(comment.id)}
+                        className="reply-button"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+
+                          setReplyingTo((previous) =>
+                            previous === comment.id ? null : comment.id,
+                          );
+                        }}
                       >
-                        Delete
+                        Reply
                       </button>
+
+                      {comment.mine && (
+                        <button
+                          type="button"
+                          className="delete-comment"
+                          disabled={deletingComment.has(comment.id)}
+                          onClick={() => onDeleteComment(comment.id)}
+                        >
+                          {deletingComment.has(comment.id)
+                            ? "Deleting..."
+                            : "Delete"}
+                        </button>
+                      )}
+                    </div>
+
+                    {replyingTo === comment.id && (
+                      <div className="reply-input-wrapper">
+                        <input
+                          type="text"
+                          placeholder={`Reply to ${comment.author}...`}
+                          value={replyText[comment.id] || ""}
+                          onChange={(event) =>
+                            setReplyText((previous) => ({
+                              ...previous,
+                              [comment.id]: event.target.value,
+                            }))
+                          }
+                          onKeyDown={async (event) => {
+                            if (event.key === "Enter" && !event.shiftKey) {
+                              event.preventDefault();
+
+                              const text = replyText[comment.id] || "";
+
+                              const success = await onAddReply(
+                                comment.id,
+                                text,
+                              );
+
+                              if (success) {
+                                setReplyText((previous) => ({
+                                  ...previous,
+                                  [comment.id]: "",
+                                }));
+                                setReplyingTo(null);
+                              }
+                            }
+                          }}
+                          maxLength={500}
+                        />
+
+                        <button
+                          type="button"
+                          disabled={
+                            !replyText[comment.id]?.trim() ||
+                            savingReply.has(comment.id)
+                          }
+                          onClick={async (event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+
+                            const text = replyText[comment.id] || "";
+
+                            const success = await onAddReply(comment.id, text);
+
+                            if (success) {
+                              setReplyText((previous) => ({
+                                ...previous,
+                                [comment.id]: "",
+                              }));
+
+                              setReplyingTo(null);
+                            }
+                          }}
+                        >
+                          {savingReply.has(comment.id) ? "Sending..." : "Reply"}
+                        </button>
+                      </div>
+                    )}
+
+                    {comment.replies?.length > 0 && (
+                      <div className="replies-list">
+                        {comment.replies.map((reply) => (
+                          <div className="reply-item" key={reply.id}>
+                            <div className="comment-avatar">
+                              {reply.initial}
+                            </div>
+
+                            <div className="reply-content">
+                              <div className="comment-meta">
+                                <strong>{reply.author}</strong>
+                                <span>{reply.time}</span>
+                              </div>
+
+                              <p>{reply.text}</p>
+
+                              <div className="comment-actions">
+                                {reply.mine && (
+                                  <button
+                                    type="button"
+                                    className="delete-comment"
+                                    disabled={deletingComment.has(reply.id)}
+                                    onClick={() => onDeleteComment(reply.id)}
+                                  >
+                                    {deletingComment.has(reply.id)
+                                      ? "Deleting..."
+                                      : "Delete"}
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
                 </div>

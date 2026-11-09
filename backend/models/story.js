@@ -14,6 +14,21 @@ const musicSchema = new mongoose.Schema(
   { _id: false },
 );
 
+const viewerSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    viewedAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { _id: false },
+);
+
 const storySchema = new mongoose.Schema(
   {
     user: {
@@ -32,25 +47,29 @@ const storySchema = new mongoose.Schema(
     mediaUrl: { type: String, default: "" },
     text: { type: String, default: "", maxlength: 160 },
     code: { type: String, default: "", maxlength: 400 },
-
-    // FIX 2: same casing as the frontend LANGS list
     lang: { type: String, enum: LANGS, default: "JavaScript" },
 
     background: { type: String, default: "#000000" },
-
-    // Only stored when a song is picked (see controller)
     music: { type: musicSchema, default: undefined },
 
-    // FIX 3: musicPos always exists
     musicPos: {
       x: { type: Number, default: 7 },
       y: { type: Number, default: 68 },
     },
 
-    // FIX 1: only values the frontend uses
-    musicStyle: { type: String, enum: ["full", "pill"], default: "full" },
+    musicStyle: {
+      type: String,
+      enum: ["full", "pill"],
+      default: "full",
+    },
+
     musicRot: { type: Number, default: 0 },
     musicScale: { type: Number, default: 1 },
+
+    viewers: {
+      type: [viewerSchema],
+      default: [],
+    },
 
     expiresAt: {
       type: Date,
@@ -60,10 +79,7 @@ const storySchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-// TTL index: MongoDB deletes the story once expiresAt has passed
 storySchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-
-// Fast feed query
 storySchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model("Story", storySchema);

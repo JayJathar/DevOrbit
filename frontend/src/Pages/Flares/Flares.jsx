@@ -16,6 +16,8 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import PauseRoundedIcon from "@mui/icons-material/PauseRounded";
 import RotateRightRoundedIcon from "@mui/icons-material/RotateRightRounded";
+import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
+import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 
 const DAY = 24 * 60 * 60 * 1000;
 const DURATION = 5000;
@@ -28,11 +30,7 @@ const BGS = ["#000000", "#1a1a1a", "#ececec", "#ffffff"];
 const isLight = (bg) => bg === "#ffffff" || bg === "#ececec";
 
 const LANGS = ["JavaScript", "TypeScript", "Python", "Go", "CSS", "HTML"];
-
-// ======================================================
-// API
-// ======================================================
-
+    
 const BACKEND_URL = "http://localhost:5000";
 const API_BASE = `${BACKEND_URL}/api`;
 const STORIES_URL = `${API_BASE}/stories`;
@@ -106,16 +104,19 @@ const EMPTY_ME = {
   initial: "U",
   items: [],
 };
-
-// One DB story -> one UI item
 const mapStory = (s, seenSet) => ({
   id: s._id,
-  type: s.type,
+  type: s.type === "image" ? "photo" : s.type,
   text: s.text || "",
   code: s.code || "",
   lang: s.lang || "JavaScript",
   image: getMediaUrl(s.mediaUrl || ""),
   bg: s.background || "#000000",
+
+  // New: server-side view information
+  viewCount: Number(s.viewCount || 0),
+  hasViewed: Boolean(s.hasViewed),
+
   music: s.music?.id
     ? {
         ...s.music,
@@ -123,29 +124,63 @@ const mapStory = (s, seenSet) => ({
         art: "rings",
       }
     : null,
+
   musicPos: s.musicPos || { x: 7, y: 68 },
   musicStyle: s.musicStyle === "pill" ? "pill" : "full",
   musicRot: s.musicRot ?? 0,
   musicScale: s.musicScale ?? 1,
   createdAt: new Date(s.createdAt).getTime(),
-  seen: s.isMine || seenSet.has(s._id),
+  seen: seenSet.has(s._id),
 });
+const MY_ID_KEY = "flares_my_id";
+const getMyId = (propId = "") => {
+  if (propId) return String(propId);
 
-// Flat story list from the API -> [{ me }, { friend }, ...]
-const buildGroups = (stories) => {
+  try {
+    const saved = localStorage.getItem(MY_ID_KEY);
+    if (saved) return saved;
+  } catch {
+    /* ignore */
+  }
+
+  try {
+    const u = JSON.parse(localStorage.getItem("user") || "null");
+    if (u?._id || u?.id) return String(u._id || u.id);
+  } catch {
+    /* ignore */
+  }
+
+  try {
+    const base64 = (getToken() || "")
+      .split(".")[1]
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+    const payload = JSON.parse(atob(base64));
+    return String(
+      payload.id || payload._id || payload.userId || payload.sub || "",
+    );
+  } catch {
+    return "";
+  }
+};
+
+const buildGroups = (stories, currentUserId = "") => {
   const seenSet = loadSeen();
+  const myId = getMyId(currentUserId);
   const me = { ...EMPTY_ME, items: [] };
   const friends = new Map();
 
   stories.forEach((s) => {
-    const item = mapStory(s, seenSet);
+    const uid = String(s.user?._id || s.user);
+    const mine = s.isMine === true || (Boolean(myId) && uid === myId);
 
-    if (s.isMine) {
+    const item = mapStory({ ...s, isMine: mine }, seenSet);
+
+    if (mine) {
       me.items.push(item);
       return;
     }
 
-    const uid = String(s.user?._id || s.user);
     const name = s.user?.name || s.user?.username || "User";
 
     if (!friends.has(uid)) {
@@ -163,19 +198,13 @@ const buildGroups = (stories) => {
   return [me, ...friends.values()];
 };
 
-// ======================================================
-// RING
-// ======================================================
-
 function Ring({ items, initial }) {
   const n = items.length;
-
-  const gap = n > 1 ? 5 : 0;
-
+  const gap = n > 1 ? 6 : 0;
   const seg = n ? C / n - gap : 0;
 
   return (
-    <svg viewBox="0 0 60 60" width="58" height="58" aria-hidden="true">
+    <svg viewBox="0 0 60 60" width="64" height="64" aria-hidden="true">
       {n === 0 ? (
         <circle cx="30" cy="30" r={R} className="st-ring-empty" />
       ) : (
@@ -185,20 +214,18 @@ function Ring({ items, initial }) {
             cx="30"
             cy="30"
             r={R}
-            className={it.seen ? "st-seg seen" : "st-seg"}
+            fill="none"
+            /* unseen = white (matches the black/white theme), seen = grey */
+            stroke={it.seen ? "#4a4a4a" : "#ffffff"}
+            strokeWidth={it.seen ? 2 : 3}
+            strokeLinecap="round"
             strokeDasharray={`${seg} ${C}`}
             transform={`rotate(${-90 + (i * 360) / n + (gap / C) * 180} 30 30)`}
           />
         ))
       )}
 
-      {items.some((i) => !i.seen) && (
-        <g className="st-sat">
-          <circle cx="30" cy="4" r="2.2" />
-        </g>
-      )}
-
-      <circle cx="30" cy="30" r="21" className="st-core" />
+      <circle cx="30" cy="30" r="21.5" className="st-core" />
 
       <text x="30" y="34" textAnchor="middle" className="st-initial">
         {initial}
@@ -389,10 +416,6 @@ function SongCard({
   );
 }
 
-// ======================================================
-// MUSIC PICKER — opens as a full story-style overlay
-// ======================================================
-
 function formatDuration(milliseconds) {
   if (!milliseconds) return "--:--";
 
@@ -452,8 +475,6 @@ function MusicPicker({ open, selected, onPick, onClose }) {
         if (!response.ok || !data.success) {
           throw new Error(data.message || "Unable to load music.");
         }
-        console.log("Published story from backend:", data.story);
-        console.log("Photo URL:", getMediaUrl(data.story?.mediaUrl));
 
         const formattedSongs = (data.songs || []).map((track) => ({
           id: String(track.id),
@@ -507,7 +528,6 @@ function MusicPicker({ open, selected, onPick, onClose }) {
 
     setPreviewMessage("");
 
-    // Pause the currently playing song when its button is clicked.
     if (activeSong === song.id && !audio.paused) {
       audio.pause();
       setActiveSong(null);
@@ -516,7 +536,6 @@ function MusicPicker({ open, selected, onPick, onClose }) {
 
     const url = songSrc(song);
 
-    // Not every track has a preview.
     if (!url) {
       audio.pause();
       audio.removeAttribute("src");
@@ -758,20 +777,11 @@ function MusicPicker({ open, selected, onPick, onClose }) {
   );
 }
 
-// ======================================================
-// DRAGGABLE — move, rotate and resize the song card
-//  • 1 finger / mouse: drag
-//  • 2 fingers: pinch to resize, twist to rotate
-//  • corner handle: drag to rotate + resize (mouse friendly)
-//  • double-click the handle: reset
-// ======================================================
-
 const MIN_SCALE = 0.5;
 const MAX_SCALE = 2.5;
 
 const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
 
-// Snap to 0° when close, like Instagram's level guide
 const snapAngle = (deg) => {
   const n = ((((deg + 180) % 360) + 360) % 360) - 180;
   return Math.abs(n) < 4 ? 0 : n;
@@ -865,15 +875,12 @@ function Draggable({
 
     if (g.mode !== "drag") return;
 
-    // ---------- one pointer: drag ----------
     const dx = e.clientX - g.px;
     const dy = e.clientY - g.py;
 
     if (!moved.current && Math.abs(dx) + Math.abs(dy) > 4) {
       moved.current = true;
       setActive(true);
-
-      // capture only once a real drag starts, so normal taps still work
       el.current.setPointerCapture(e.pointerId);
     }
 
@@ -1003,7 +1010,11 @@ function Draggable({
 // MAIN COMPONENT
 // ======================================================
 
-export default function Flares({ displayName = "", userInitial = "U" }) {
+export default function Flares({
+  displayName = "",
+  userInitial = "U",
+  currentUserId = "",
+}) {
   const [groups, setGroups] = useState([EMPTY_ME]);
   const [storiesLoading, setStoriesLoading] = useState(true);
   const [storiesError, setStoriesError] = useState("");
@@ -1026,13 +1037,22 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
 
   const [posting, setPosting] = useState(false);
 
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
   const handlers = useRef({});
 
   const holdStart = useRef(0);
+  const [toast, setToast] = useState(null);
 
   // Audio player for the story viewer
   const viewerAudioRef = useRef(null);
 
+  // NEW: Story viewers panel state
+  const [viewersOpen, setViewersOpen] = useState(false);
+  const [storyViewers, setStoryViewers] = useState([]);
+  const [viewersLoading, setViewersLoading] = useState(false);
+  const [viewersError, setViewersError] = useState("");
   // ====================================================
   // CLOCK
   // ====================================================
@@ -1046,8 +1066,22 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
   }, []);
 
   // ====================================================
-  // LOAD STORIES FROM THE DATABASE
+  // TOAST
   // ====================================================
+
+  useEffect(() => {
+    if (!toast) return;
+
+    const timer = setTimeout(() => {
+      setToast(null);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [toast]);
+
+  const showToast = (message, type = "success") => {
+    setToast({ message, type, id: Date.now() });
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -1074,10 +1108,9 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
         if (!response.ok || !data.success) {
           throw new Error(data.message || "Could not load stories.");
         }
+        console.log("STORIES API RESPONSE:", data);
 
-        console.log("Stories received from backend:", data.stories);
-
-        setGroups(buildGroups(data.stories || []));
+        setGroups(buildGroups(data.stories || [], currentUserId));
       } catch (err) {
         if (err.name !== "AbortError") {
           console.error("Load stories error:", err);
@@ -1094,10 +1127,6 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
 
     return () => controller.abort();
   }, []);
-
-  // ====================================================
-  // DATA
-  // ====================================================
 
   const live = groups.map((g) => ({
     ...g,
@@ -1121,12 +1150,7 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
 
   const item = vg ? vg.items[viewer.idx] : null;
 
-  // Source of the song attached to the story currently being viewed
   const viewerMusicSrc = songSrc(item?.music);
-
-  // ====================================================
-  // VIEWER
-  // ====================================================
 
   const resetPlay = () => {
     setProgress(0);
@@ -1155,6 +1179,7 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
   const closeViewer = () => {
     setViewer(null);
     setPaused(false);
+    setConfirmDelete(false);
     resetPlay();
   };
 
@@ -1236,10 +1261,6 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
     }
   }, [progress]);
 
-  // ====================================================
-  // VIEWER AUDIO — play / pause with the story
-  // ====================================================
-
   useEffect(() => {
     const audio = viewerAudioRef.current;
 
@@ -1254,10 +1275,6 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
       });
     }
   }, [paused, item?.id, viewerMusicSrc]);
-
-  // ====================================================
-  // MARK AS SEEN (state + remembered in localStorage)
-  // ====================================================
 
   useEffect(() => {
     if (!item || item.seen) return;
@@ -1283,10 +1300,6 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
       ),
     );
   }, [item?.id]);
-
-  // ====================================================
-  // VIEWER KEYBOARD
-  // ====================================================
 
   useEffect(() => {
     if (!viewer) return;
@@ -1319,10 +1332,6 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
       document.body.style.overflow = "";
     };
   }, [viewer]);
-
-  // ====================================================
-  // COMPOSER KEYBOARD
-  // ====================================================
 
   useEffect(() => {
     if (!composer) return;
@@ -1385,13 +1394,13 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
     if (!file) return;
 
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-      alert("Please select a JPG, PNG, or WEBP image.");
+      showToast("Please select a JPG, PNG, or WEBP image.", "error");
       event.target.value = "";
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      alert("Image size must be less than 5 MB.");
+      showToast("Image size must be less than 5 MB.", "error");
       event.target.value = "";
       return;
     }
@@ -1430,7 +1439,10 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
     const c = composer;
 
     if (!getToken()) {
-      alert("Please log in again. Authentication token not found.");
+      showToast(
+        "Please log in again. Authentication token not found.",
+        "error",
+      );
       return;
     }
 
@@ -1470,7 +1482,7 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
         formData.append("musicPos", JSON.stringify(c.musicPos));
         formData.append("musicStyle", c.musicStyle);
         formData.append("musicRot", String(c.musicRot));
-        ("musicScale", String(c.musicScale));
+        formData.append("musicScale", String(c.musicScale));
 
         response = await fetch(STORIES_URL, {
           method: "POST",
@@ -1514,6 +1526,14 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
       if (!response.ok || !data.success) {
         throw new Error(data.message || "Failed to publish story.");
       }
+      const postedBy = data.story?.user?._id || data.story?.user;
+      if (postedBy) {
+        try {
+          localStorage.setItem(MY_ID_KEY, String(postedBy));
+        } catch {
+          /* ignore */
+        }
+      }
 
       const it = mapStory({ ...data.story, isMine: true }, new Set());
 
@@ -1531,22 +1551,30 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
 
       setComposer(null);
       setMusicSheet(false);
+      showToast("Story shared successfully");
     } catch (error) {
       console.error("Publish story error:", error);
-      alert(error.message || "Could not publish story.");
+      showToast(error.message || "Could not publish story.", "error");
     } finally {
       setPosting(false);
     }
   };
 
-  // ====================================================
-  // DELETE (removes it from the database too)
-  // ====================================================
+  const askDelete = () => {
+    setPaused(true);
+    setConfirmDelete(true);
+  };
+
+  const cancelDelete = () => {
+    setConfirmDelete(false);
+    setPaused(false);
+  };
 
   const deleteCurrent = async () => {
-    if (!item) return;
+    if (!item || deleting) return;
 
     const target = item;
+    setDeleting(true);
 
     try {
       const response = await fetch(`${STORIES_URL}/${target.id}`, {
@@ -1561,9 +1589,15 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
       }
     } catch (error) {
       console.error("Delete story error:", error);
-      alert(error.message || "Could not delete story.");
+      showToast(error.message || "Could not delete story.", "error");
+      setDeleting(false);
+      cancelDelete();
       return;
     }
+
+    setDeleting(false);
+    setConfirmDelete(false);
+    setPaused(false);
 
     setGroups((prev) =>
       prev.map((g) =>
@@ -1575,6 +1609,8 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
           : g,
       ),
     );
+
+    showToast("Story deleted");
 
     if (vg.items.length <= 1) {
       closeViewer();
@@ -1588,10 +1624,6 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
     }
   };
 
-  // ====================================================
-  // REPLY
-  // ====================================================
-
   const sendReply = () => {
     if (!reply.trim()) return;
 
@@ -1600,30 +1632,102 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
     setSent(true);
   };
 
-  // ====================================================
-  // TAP
-  // ====================================================
+  const openViewers = async () => {
+    if (!item || !vg?.mine) return;
+
+    setViewersOpen(true);
+    setStoryViewers([]);
+    setViewersError("");
+    setViewersLoading(true);
+    setPaused(true);
+
+    try {
+      const response = await fetch(`${STORIES_URL}/${item.id}/viewers`, {
+        headers: authHeaders(),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Could not load story viewers.");
+      }
+
+      setStoryViewers(data.viewers || []);
+
+      setGroups((prev) =>
+        prev.map((group) => ({
+          ...group,
+          items: group.items.map((story) =>
+            story.id === item.id
+              ? {
+                  ...story,
+                  viewCount: Number(data.viewCount ?? story.viewCount ?? 0),
+                }
+              : story,
+          ),
+        })),
+      );
+    } catch (error) {
+      console.error("Load story viewers error:", error);
+      setViewersError(error.message || "Could not load viewers.");
+    } finally {
+      setViewersLoading(false);
+    }
+  };
+
+  const closeViewers = () => {
+    setViewersOpen(false);
+    setStoryViewers([]);
+    setViewersError("");
+    setPaused(false);
+  };
 
   const tap = (fn) => () => {
     if (Date.now() - holdStart.current > 250) {
       return;
     }
-
     fn();
   };
 
-  // ====================================================
-  // TEXT COLOR
-  // ====================================================
-
   const textColor = (bg) => (isLight(bg) ? "#050505" : "#fff");
-
-  // ====================================================
-  // RENDER
-  // ====================================================
 
   return (
     <section className="st" aria-label="Stories">
+      {toast &&
+        createPortal(
+          <div
+            key={toast.id}
+            className={`st-toast ${toast.type || "success"}`}
+            role="status"
+            aria-live="polite"
+            style={{
+              position: "fixed",
+              top: 24,
+              left: "50%",
+              zIndex: 2147483647,
+            }}
+          >
+            <span className="st-toast-icon">
+              {toast.type === "error" ? (
+                <ErrorOutlineRoundedIcon fontSize="small" />
+              ) : (
+                <CheckRoundedIcon fontSize="small" />
+              )}
+            </span>
+
+            <span className="st-toast-message">{toast.message}</span>
+
+            <button
+              type="button"
+              onClick={() => setToast(null)}
+              aria-label="Close notification"
+            >
+              <CloseRoundedIcon fontSize="small" />
+            </button>
+          </div>,
+          document.body,
+        )}
+
       <div className="st-head">
         <div>
           <span className="section-kicker">
@@ -1635,10 +1739,7 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
         </div>
       </div>
 
-      {/* ==================================================
-          STORY ROW
-      ================================================== */}
-
+      {/* STORY ROW */}
       <div className="st-row">
         <div className="st-tile">
           <button
@@ -1656,11 +1757,7 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
             onClick={() => openComposer()}
             aria-label="Add to your Story"
           >
-            <AddRoundedIcon
-              style={{
-                fontSize: 14,
-              }}
-            />
+            <AddRoundedIcon style={{ fontSize: 14 }} />
           </button>
 
           <strong>You</strong>
@@ -1674,7 +1771,6 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
             onClick={() => openViewer(g)}
           >
             <Ring items={g.items} initial={g.initial} />
-
             <strong>{g.name}</strong>
           </button>
         ))}
@@ -1698,10 +1794,7 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
         </p>
       )}
 
-      {/* ==================================================
-          COMPOSER
-      ================================================== */}
-
+      {/* COMPOSER */}
       {composer &&
         createPortal(
           <div
@@ -1746,14 +1839,9 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
                       type="button"
                       key={key}
                       className={composer.type === key ? "on" : ""}
-                      onClick={() =>
-                        patch({
-                          type: key,
-                        })
-                      }
+                      onClick={() => patch({ type: key })}
                     >
                       <Icon fontSize="small" />
-
                       {label}
                     </button>
                   ))}
@@ -1766,15 +1854,9 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
                     autoFocus
                     maxLength={160}
                     value={composer.text}
-                    onChange={(e) =>
-                      patch({
-                        text: e.target.value,
-                      })
-                    }
+                    onChange={(e) => patch({ text: e.target.value })}
                     placeholder="What are you up to?"
-                    style={{
-                      color: textColor(composer.bg),
-                    }}
+                    style={{ color: textColor(composer.bg) }}
                   />
                 )}
 
@@ -1789,9 +1871,7 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
                     ) : (
                       <label className="st-pick">
                         <PhotoCameraOutlinedIcon />
-
                         <span>Choose a photo</span>
-
                         <input
                           type="file"
                           accept="image/jpeg,image/png,image/webp"
@@ -1805,11 +1885,7 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
                       className="st-caption"
                       maxLength={100}
                       value={composer.text}
-                      onChange={(e) =>
-                        patch({
-                          text: e.target.value,
-                        })
-                      }
+                      onChange={(e) => patch({ text: e.target.value })}
                       placeholder="Add a caption"
                     />
                   </>
@@ -1819,11 +1895,7 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
                   <>
                     <select
                       value={composer.lang}
-                      onChange={(e) =>
-                        patch({
-                          lang: e.target.value,
-                        })
-                      }
+                      onChange={(e) => patch({ lang: e.target.value })}
                       className="st-lang"
                     >
                       {LANGS.map((l) => (
@@ -1835,11 +1907,7 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
                       autoFocus
                       className="st-codearea"
                       value={composer.code}
-                      onChange={(e) =>
-                        patch({
-                          code: e.target.value,
-                        })
-                      }
+                      onChange={(e) => patch({ code: e.target.value })}
                       placeholder="Paste a snippet"
                       spellCheck={false}
                       maxLength={400}
@@ -1849,7 +1917,6 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
               </div>
 
               {/* SELECTED MUSIC */}
-
               {composer.music && (
                 <Draggable
                   pos={composer.musicPos}
@@ -1868,18 +1935,11 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
                           composer.musicStyle === "pill" ? "full" : "pill",
                       })
                     }
-                    onRemove={() =>
-                      patch({
-                        music: null,
-                      })
-                    }
+                    onRemove={() => patch({ music: null })}
                   />
                 </Draggable>
               )}
 
-              {/* COMPOSER AUDIO — plays the chosen song while composing.
-                  Paused while the music picker is open so the two
-                  previews don't overlap. */}
               {!musicSheet && songSrc(composer.music) && (
                 <audio
                   key={composer.music.id}
@@ -1899,14 +1959,8 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
                         key={b}
                         aria-label={`Background ${b}`}
                         className={composer.bg === b ? "on" : ""}
-                        style={{
-                          background: b,
-                        }}
-                        onClick={() =>
-                          patch({
-                            bg: b,
-                          })
-                        }
+                        style={{ background: b }}
+                        onClick={() => patch({ bg: b })}
                       />
                     ))}
                   </div>
@@ -1921,7 +1975,6 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
                   aria-label={composer.music ? "Change music" : "Add music"}
                 >
                   <MusicNoteRoundedIcon fontSize="small" />
-
                   <span>{composer.music ? "Change" : "Music"}</span>
                 </button>
 
@@ -1936,7 +1989,6 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
               </div>
             </div>
 
-            {/* Music picker opens on top of the composer, same style as the story overlay */}
             <MusicPicker
               open={musicSheet}
               selected={composer.music}
@@ -1947,10 +1999,7 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
           document.body,
         )}
 
-      {/* ==================================================
-          VIEWER
-      ================================================== */}
-
+      {/* VIEWER */}
       {viewer &&
         vg &&
         item &&
@@ -1961,9 +2010,7 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
             aria-modal="true"
             aria-label={`${vg.name}'s status`}
             onClick={(e) => {
-              if (e.target === e.currentTarget) {
-                closeViewer();
-              }
+              if (e.target === e.currentTarget) closeViewer();
             }}
           >
             <button
@@ -1989,9 +2036,7 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
                 <div
                   className="st-blur"
                   aria-hidden="true"
-                  style={{
-                    backgroundImage: `url(${item.image})`,
-                  }}
+                  style={{ backgroundImage: `url(${item.image})` }}
                 />
               )}
 
@@ -2019,9 +2064,7 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
                 }}
               >
                 <div className="st-user-avatar">{vg.initial}</div>
-
                 <strong>{vg.name}</strong>
-
                 <span>{ago(now - item.createdAt)}</span>
 
                 <button
@@ -2035,10 +2078,9 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
               </div>
 
               <div
-                className="st-stage"
+                className={`st-stage ${item.type === "photo" ? "photo" : ""}`}
                 onPointerDown={() => {
                   holdStart.current = Date.now();
-
                   setPaused(true);
                 }}
                 onPointerUp={() => setPaused(false)}
@@ -2062,20 +2104,15 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
                   <p
                     key={item.id}
                     className="st-text"
-                    style={{
-                      color: textColor(item.bg),
-                    }}
+                    style={{ color: textColor(item.bg) }}
                   >
                     {item.text.split(" ").map((w, i, arr) => (
                       <span
                         key={i}
                         className="st-word"
-                        style={{
-                          animationDelay: `${i * 55}ms`,
-                        }}
+                        style={{ animationDelay: `${i * 55}ms` }}
                       >
                         {w}
-
                         {i < arr.length - 1 ? "\u00A0" : ""}
                       </span>
                     ))}
@@ -2088,8 +2125,8 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
                       src={item.image}
                       alt={item.text || "Status"}
                       className="st-photo"
+                      draggable={false}
                     />
-
                     {item.text && <p className="st-cap">{item.text}</p>}
                   </>
                 )}
@@ -2100,17 +2137,13 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
                       <i />
                       <i />
                       <i />
-
                       <em>{item.lang}</em>
                     </span>
-
                     <pre>{item.code}</pre>
                   </div>
                 )}
               </div>
 
-              {/* VIEWER AUDIO — this is what actually plays the song.
-                  key={item.id} restarts the audio for every story item. */}
               {viewerMusicSrc && (
                 <audio
                   key={item.id}
@@ -2129,7 +2162,6 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
               )}
 
               {/* VIEWER MUSIC CARD */}
-
               {item.music && (
                 <div
                   className={`st-song-slot drag viewer-pos ${
@@ -2160,7 +2192,7 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
                     <button
                       type="button"
                       className="st-icon"
-                      onClick={deleteCurrent}
+                      onClick={askDelete}
                       aria-label="Delete status"
                     >
                       <DeleteOutlineRoundedIcon />
@@ -2190,6 +2222,43 @@ export default function Flares({ displayName = "", userInitial = "U" }) {
                   </div>
                 )}
               </div>
+
+              {confirmDelete && (
+                <div
+                  className="st-confirm"
+                  role="alertdialog"
+                  aria-modal="true"
+                  aria-labelledby="st-confirm-title"
+                  onClick={(e) => {
+                    if (e.target === e.currentTarget) cancelDelete();
+                  }}
+                >
+                  <div className="st-confirm-box">
+                    <h4 id="st-confirm-title">Delete this story?</h4>
+                    <p>This will permanently remove it. You can't undo this.</p>
+
+                    <div className="st-confirm-actions">
+                      <button
+                        type="button"
+                        className="st-confirm-cancel"
+                        onClick={cancelDelete}
+                        disabled={deleting}
+                      >
+                        Cancel
+                      </button>
+
+                      <button
+                        type="button"
+                        className="st-confirm-delete"
+                        onClick={deleteCurrent}
+                        disabled={deleting}
+                      >
+                        {deleting ? "Deleting..." : "Delete"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <button
